@@ -12,6 +12,19 @@ import numpy as np
 CACHE = Path(__file__).resolve().parent / "cache"
 
 
+def make_opacity(database, grid):
+    """Build direct opacity, retaining an exact zero for an empty line selection."""
+    from exojax.opacity import OpaDirect
+
+    if len(database.nu_lines):
+        return OpaDirect(database, grid)
+    grid = jnp.asarray(grid)
+    return SimpleNamespace(mdb=database, nu_grid=grid,
+                           opainfo=jnp.zeros((0, len(grid))),
+                           xsvector=lambda temperature, pressure, self_pressure=0.:
+                           jnp.zeros_like(grid))
+
+
 def load_mdb(name: str, numin: float, numax: float,
              crit: float = 1e-28) -> SimpleNamespace:
     """Select lines by their natural-abundance 296 K reference strength."""

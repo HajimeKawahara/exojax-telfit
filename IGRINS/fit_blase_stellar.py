@@ -26,6 +26,7 @@ from exojax.postproc.spin_rotation import convolve_rigid_rotation
 
 from blase_stellar import build_clone
 from fit_line_strength import build_context, make_forward, metrics, WORKING_SIGMA
+from stellar_template import load_stellar
 
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "results"
@@ -97,10 +98,103 @@ def residual_functions(forward, wave, mask):
     return jax.jit(residual), jax.jit(jax.jacfwd(residual, 0)), jax.jit(jax.jacfwd(residual, 1))
 
 
+def derivative_statistics(forward, point, mask, chunk_size):
+    """Reduce model derivatives in bounded chunks without a full Jacobian."""
+    count = len(point)
+    maximum, selected_power, full_power = (np.zeros(count) for _ in range(3))
+    if count == 0:
+        return maximum, selected_power, full_power
+    point = jnp.asarray(point)
+    size = min(count, chunk_size)
+    directional = jax.jit(jax.vmap(lambda tangent: jax.jvp(
+        forward, (point,), (tangent,))[1]))
+    for start in range(0, count, size):
+        stop = min(start+size, count)
+        tangents = np.zeros((size, count))
+        tangents[np.arange(stop-start), np.arange(start, stop)] = 1
+        values = np.asarray(directional(jnp.asarray(tangents)))[:stop-start, :5]
+        if np.any(mask):
+            maximum[start:stop] = np.max(np.abs(values[..., mask]), axis=(1, 2))
+            selected_power[start:stop] = np.sum(values[..., mask]**2, axis=(1, 2))
+        full_power[start:stop] = np.sum(values**2, axis=(1, 2))
+    return maximum, selected_power, full_power
+
+
+def check_least_squares_gradient(residual, point, gradient, direction, step=1e-4,
+                                 maximum_step=np.inf):
+    """Check a squared-residual gradient without subtracting large objectives."""
+    point, direction = jnp.asarray(point), jnp.asarray(direction)
+    analytic = float(np.asarray(gradient) @ np.asarray(direction))
+    values, tangent = jax.jvp(residual, (point,), (direction,))
+    forward = float(np.asarray(values) @ np.asarray(tangent))
+    if not np.isfinite([analytic, forward]).all():
+        raise ValueError("Nonfinite directional gradient")
+    np.testing.assert_allclose(analytic, forward, rtol=1e-7, atol=1e-8,
+                               err_msg="Reverse-gradient and residual JVP disagree")
+    checks, previous = [], None
+    for trial in np.unique(np.minimum(step*np.array([1., 10., 100.]), maximum_step)):
+        if trial <= 0:
+            raise ValueError("A positive feasible finite-difference step is required")
+        plus = np.asarray(residual(point+trial*direction))
+        minus = np.asarray(residual(point-trial*direction))
+        # Factoring the scalar costs avoids their cancellation. Larger steps
+        # can also resolve residual-level rounding near a stationary point.
+        central = float(((plus-minus)/(2*trial)) @ ((plus+minus)/2))
+        candidates = [dict(method="central", step=float(trial), finite_difference=central)]
+        if previous is not None:
+            smaller, smaller_fd = previous
+            ratio = (trial/smaller)**2
+            # Remove the leading O(h^2) truncation term once a larger step
+            # has reduced subtraction noise in the residual vector.
+            extrapolated = (ratio*smaller_fd-central)/(ratio-1)
+            candidates.append(dict(method="Richardson", step=float(smaller),
+                                   larger_step=float(trial), finite_difference=float(extrapolated)))
+        previous = trial, central
+        matched = False
+        for check in candidates:
+            fd = check["finite_difference"]
+            error = abs(fd-analytic)/max(abs(analytic), 1e-5)
+            check.update(relative_error=error, absolute_error=abs(fd-analytic))
+            checks.append(check)
+            if np.isfinite(fd) and (error <= 1e-3 or abs(fd-analytic) <= 1e-6):
+                matched = True
+                break
+        if matched:
+            break
+    else:
+        raise ValueError(f"Reverse-gradient finite differences failed: {checks}, analytic={analytic}")
+    return dict(gradient_directional_error=error, gradient_directional_fd=fd,
+                gradient_directional_analytic=analytic,
+                gradient_directional_absolute_error=abs(fd-analytic),
+                gradient_directional_forward_ad=forward,
+                gradient_directional_forward_ad_absolute_error=abs(forward-analytic),
+                gradient_directional_steps=checks,
+                gradient_directional_method="Feasible factored central differences with step adaptation and Richardson extrapolation, including prior; independently checked by residual JVP")
+
+
+class FixedReferenceStar:
+    """Retain PHOENIX where too few clear pixels constrain a stellar correction."""
+
+    def __init__(self, grid, reason):
+        self.raw_reference = jnp.asarray(load_stellar(np.asarray(grid)))
+        self.n_lines = 0
+        self.centers_angstrom = np.empty(0)
+        self.amplitude_ratio_upper = np.empty(0)
+        self.metadata = dict(model="Unmodified PHOENIX", reason=reason,
+                             optimization=dict(success=True, skipped=True))
+
+    def corrected_raw(self, q):
+        if q.shape != (0,):
+            raise ValueError("The fixed reference star has no fitted amplitudes")
+        return self.raw_reference
+
+
 class Problem:
     """Frozen data, line basis, masks and priors for paired calibration tests."""
 
-    def __init__(self, context=None):
+    def __init__(self, context=None, *, allow_sparse_calibration=False,
+                 derivative_chunk_size=None, clone_retries=0):
+        self.diagnostic_flags = []
         if context is None:
             assert hashlib.sha256((OUT/"adopted_telluric_fit.npz").read_bytes()).hexdigest() == ADOPTED_HASH
             context = build_context()
@@ -115,9 +209,16 @@ class Problem:
             contrasts = []
             for b, block in enumerate(context["blocks"]):
                 zero = jnp.zeros(len(block["records"]))
-                derivative = np.asarray(jax.jit(jax.jacfwd(block["train_forward"]))(zero))
-                contrasts.append(np.max(np.abs(derivative[:, context["allowed"][b]]),
-                                        axis=(0, 1))/block["upper"])
+                if len(zero) == 0:
+                    contrasts.append(np.empty(0))
+                elif derivative_chunk_size is not None:
+                    maximum, _, _ = derivative_statistics(block["train_forward"], zero,
+                        context["allowed"][b], derivative_chunk_size)
+                    contrasts.append(maximum/block["upper"])
+                else:
+                    derivative = np.asarray(jax.jit(jax.jacfwd(block["train_forward"]))(zero))
+                    contrasts.append(np.max(np.abs(derivative[:, context["allowed"][b]]),
+                                            axis=(0, 1))/block["upper"])
             contrast = np.concatenate(contrasts)
             physical = context["physical_parameters"]
         self.context = context
@@ -134,16 +235,33 @@ class Problem:
             transmission = np.asarray(only_telluric(z))
             mask = np.min(transmission[:5], axis=0) > .95
             if mask.sum() < 30:
-                raise ValueError("Insufficient telluric-clear calibration pixels")
-            clone = build_clone(np.asarray(block["grid"]), block["order"])
-            if not clone.metadata["optimization"]["success"]:
-                raise RuntimeError(f"PHOENIX clone did not converge for order {block['order']}")
+                if not allow_sparse_calibration:
+                    raise ValueError("Insufficient telluric-clear calibration pixels")
+                reason = (f"Cube order {block['order']}: only {int(mask.sum())} telluric-clear "
+                          "pixels; retain fixed PHOENIX without observational stellar corrections")
+                self.diagnostic_flags.append(reason)
+                clone = FixedReferenceStar(block["grid"], reason)
+            else:
+                for attempt in range(clone_retries+1):
+                    clone = build_clone(np.asarray(block["grid"]), block["order"])
+                    if clone.metadata["optimization"]["success"]:
+                        break
+                    print("Continuing PHOENIX clone", block["order"], attempt+1, flush=True)
+                if not clone.metadata["optimization"]["success"]:
+                    raise RuntimeError(f"PHOENIX clone did not converge for order {block['order']}")
             funcs = forward_functions(block, clone, physical, relative_rv)
             q = np.ones(clone.n_lines)
-            derivative = np.asarray(jax.jit(jax.jacfwd(funcs["star"]))(q))[:5]
-            d = np.max(np.abs(derivative[:, mask]), axis=(0, 1))
-            coverage = np.sqrt(np.sum(derivative[:, mask]**2, axis=(0, 1))
-                               /np.maximum(np.sum(derivative**2, axis=(0, 1)), 1e-30))
+            if clone.n_lines == 0:
+                d, coverage = np.empty(0), np.empty(0)
+            elif derivative_chunk_size is not None:
+                d, selected_power, full_power = derivative_statistics(
+                    funcs["star"], q, mask, derivative_chunk_size)
+                coverage = np.sqrt(selected_power/np.maximum(full_power, 1e-30))
+            else:
+                derivative = np.asarray(jax.jit(jax.jacfwd(funcs["star"]))(q))[:5]
+                d = np.max(np.abs(derivative[:, mask]), axis=(0, 1))
+                coverage = np.sqrt(np.sum(derivative[:, mask]**2, axis=(0, 1))
+                                   /np.maximum(np.sum(derivative**2, axis=(0, 1)), 1e-30))
             free = (d > .001) & (coverage > .25)
             calibration_functions = residual_functions(funcs["train"], context["wave"][b], mask)
             original_functions = residual_functions(funcs["train"], context["wave"][b], context["allowed"][b])
@@ -178,6 +296,7 @@ class Problem:
         """Fit first-five-frame amplitudes, keeping adopted tellurics fixed."""
         target = self.context["y_over_c"] if target is None else np.asarray(target)
         q = self.initial_stellar.copy() if initial is None else np.asarray(initial).copy()
+        self.last_stellar_state = q.copy()
         diagnostics = []
         for b in self.blocks:
             sl, free = b["stellar_slice"], b["free"]
@@ -206,6 +325,7 @@ class Problem:
                                 bounds=(np.zeros(free.sum()), upper), method="trf", x_scale="jac",
                                 max_nfev=max_nfev, ftol=1e-9, xtol=1e-9, gtol=1e-7)
             q[sl] = expand(fit.x)
+            self.last_stellar_state = q.copy()
             diagnostics.append(dict(order=b["order"], success=bool(fit.success), nfev=fit.nfev,
                                     n_free=int(free.sum()), objective=float(2*fit.cost),
                                     optimality=float(fit.optimality), message=fit.message,
@@ -227,13 +347,19 @@ class Problem:
             residual, _, jacobian = b["original_functions"]
             prior, lower = self.strength_prior[sl], -1/original["upper"]
 
+            if sl.stop == sl.start:
+                diagnostics.append(dict(order=b["order"], success=True, skipped=True,
+                                        n_free=0, nfev=0,
+                                        message="No eligible telluric intensity corrections"))
+                continue
+
             def fun(values):
                 return np.r_[np.asarray(residual(fixed_q, values, y)), values/prior]
 
             def jac(values):
                 return np.vstack([np.asarray(jacobian(fixed_q, values, y)), np.diag(1/prior)])
 
-            if len(z[sl]) > 512 and getattr(self, "telluric_solver", "trf") == "lbfgsb":
+            if getattr(self, "telluric_solver", "trf") == "lbfgsb":
                 scale = jnp.asarray(prior)
 
                 def objective(scaled):
@@ -247,13 +373,17 @@ class Problem:
                 np.testing.assert_allclose(float(value), expected, rtol=1e-12, atol=1e-8)
                 direction = np.random.default_rng(20261112).normal(size=len(start))
                 direction[start-lower/prior < 1e-3] = 0
-                direction /= np.linalg.norm(direction)
-                step = 1e-4
-                fd = float((objective(start+step*direction)-objective(start-step*direction))/(2*step))
-                analytic = float(np.asarray(gradient)@direction)
-                error = abs(fd-analytic)/max(abs(analytic), 1e-5)
-                if error > 1e-3 and abs(fd-analytic) > 1e-6:
-                    raise ValueError(f"Reverse-gradient finite difference failed: {fd}, {analytic}")
+                direction_norm = np.linalg.norm(direction)
+                if direction_norm > 0:
+                    direction /= direction_norm
+                def scaled_residual(values):
+                    return jnp.concatenate((residual(fixed_q, values*scale, y), values))
+
+                nonzero = direction != 0
+                maximum_step = (.5*np.min((start-lower/prior)[nonzero]/abs(direction[nonzero]))
+                                if nonzero.any() else np.inf)
+                gradient_check = check_least_squares_gradient(
+                    scaled_residual, start, gradient, direction, maximum_step=maximum_step)
                 calls, steps = [0], [0]
 
                 def value_and_gradient(values):
@@ -291,9 +421,10 @@ class Problem:
                     message=str(fit.message), method="L-BFGS-B", options=options,
                     coordinates="z divided by frozen weak-line prior width",
                     objective_equivalence_error=abs(float(value)-expected),
-                    gradient_directional_error=error, gradient_directional_fd=fd,
-                    gradient_directional_analytic=analytic))
+                    **gradient_check))
                 print("Telluric refit", diagnostics[-1], flush=True)
+                if not fit.success:
+                    raise RuntimeError(f"Telluric refit did not converge: {diagnostics[-1]}")
                 continue
 
             solver = {}

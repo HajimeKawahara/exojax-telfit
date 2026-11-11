@@ -1,14 +1,16 @@
 # exojax-telfit
 
 Experimental telluric fitting with ExoJAX, developed on the WASP-77Ab IGRINS
-time series. The current workflow fits **Order 7**, including strong absorption,
+time series. The reference workflow fits **Order 7**, including strong absorption,
 with a layered terrestrial atmosphere, PHOENIX plus a blasé stellar correction,
 and regularized HITRAN line-strength corrections.
+The same fitting procedure can be applied independently to all 44 released
+orders, followed by a separate 79-frame export for CCF analysis.
 
 This repository contains the implementation and earlier diagnostic experiments.
-Observations, line lists, model checkpoints, generated results, and **enuma data
+Observations, line lists, model checkpoints, numerical results, and **enuma data
 are not included**. The original ExoJAX repository and its local IGRINS products
-are unchanged by this export.
+are unchanged by this export. A diagnostic RMS overview is included below.
 
 ## Setup
 
@@ -73,6 +75,81 @@ Historical fitted arrays are not required to start this workflow. Earlier
 coarse/tight solver-control tables appear in the report only when their local
 control files exist; they are not fabricated for a new run.
 
+## All orders and the observed CCF series
+
+After preparing the same inputs, run:
+
+```bash
+python IGRINS/run_all_orders.py --jobs 8 --cpus-per-job 8 \
+  --degree-four-continuum-orders $(seq 19 35) \
+  --degree-five-continuum-orders $(seq 36 42) \
+  --all-pixel-continuum-orders 43
+python IGRINS/summarize_all_orders.py --combine --png
+python IGRINS/run_ccf_series.py --jobs 2 --cpus-per-job 8
+python IGRINS/summarize_ccf_series.py
+```
+
+Choose CPU allocations that fit the machine. The shared fit uses the five
+training frames and four comparison frames listed below. Existing complete
+products are reused, including the frozen Order 7 reference when available.
+The all-order report preserves missing or failed orders explicitly. It combines
+the nine-frame products only when all 44 pass its checks.
+
+Some full-order blaze shapes require explicit continuum exceptions. Cube
+indices 19–35 use degree four, and 36–42 use degree five. Index 43 retains a
+cubic but profiles it on all pixels in its comparison frames. The original
+cubic profiles crossed zero at faint edges in these orders. The fifth-degree
+choice for indices 36–38 also improves independent score-block residuals over
+the positive but inadequate fourth-degree profiles. The report records
+the actual degree, scope and minimum continuum. These smooth-component changes
+do not repair the low throughput or guarantee small normalized residuals.
+
+The CCF application preserves the original fiducial stage ordering. It fits
+each new frame's water scaling, wavelength offset, IP width and continuum
+against the frozen, uncorrected physical model. It then applies the frozen
+stellar and line-strength corrections and the degree-five residual projection,
+keeping that continuum fixed. New frames follow the original held-out
+calibration rules and each order's adopted continuum degree/scope. The known
+nine frames reuse their saved nuisance parameters and continuum, with an exact
+conversion between physical and exported flux normalization. Their model and
+residual arrays are checked against the saved benchmark.
+
+The CCF product contains the **original observations with no artificial planet
+injection**, residuals before and after degree-five smooth subtraction,
+stellar/telluric/full model components, original BJD/phase metadata and validity
+flags. Fitted wavelength sampling offsets, stretch and per-frame IP parameters
+are included for downstream template evaluation; they do not constitute an
+independently verified absolute or barycentric wavelength solution.
+No temporal mean or common residual template is subtracted, and no
+telluric division is applied. Flux residuals are stored as fractions, not
+percentages. Wavelength decreases along the last axis; wavenumber increases.
+Order coordinates are zero-based cube indices; only cube index 5 has the
+confirmed user label Order 7.
+
+`IGRINS/results/allorders_ccf_no_injection.npz` is the final combined array file.
+Its generated README describes the fields and quality flags. Very faint
+continua can amplify continuum-normalized noise; use
+`residual_fixed_scale_q5_independent` to apply the smooth subtraction directly
+in units of each frame's p95 observed flux without continuum division.
+Undefined normalization and unsuccessful fits remain
+flagged in the output. A complete export is not an injection-recovery test.
+Optimizer termination also differs from strict repeated-refit stabilization:
+the recorded all-order run passed the optimizer checks but did not meet that
+stricter threshold. Per-order flags are in `allorders_summary.json`.
+
+![All-order observed residual RMS](docs/figures/allorders_ccf_overview.png)
+
+The 44-order, 79-frame overview compares continuum-normalized Q5 residuals,
+the same projection rescaled to frame-p95 units, and Q5 applied independently
+in frame-p95 units. Each panel has its own logarithmic color scale; their colors
+are not directly comparable. White squares mark frames with undefined
+continuum normalization. No artificial planet signal was injected.
+
+`run_ccf_series.py --wait-for-fits 21600` can consume shared products as they
+become available. Allocate separate CPU sets with `taskset` when running it
+alongside the shared-fit batch. Intermediate products and all input data remain
+Git-ignored under `IGRINS/`.
+
 ## Model and evaluation
 
 - **Band:** 2.26622167–2.29458395 microns in the released archive, all 1,848 pixels.
@@ -129,8 +206,9 @@ python -m compileall -q IGRINS
 ```
 
 The lightweight regression checks exercise the required ExoJAX convolution
-behavior. `check_order7.py` independently verifies fitted products after a real
-fit. Source-export hashes and the environment are recorded in
+behavior and the guarded TRF SVD fallback. `check_order7.py` independently
+verifies fitted products after a real fit. Initial-export source hashes and
+the environment are recorded in
 `docs/implementation_manifest.json`.
 
 The implementation is MIT licensed. The vendored blasé JAX module retains its
