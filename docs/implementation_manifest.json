@@ -1,0 +1,934 @@
+{
+  "created_utc": "2026-11-11T17:13:12.509815+00:00",
+  "source_repository": "https://github.com/HajimeKawahara/exojax",
+  "source_commit": "19fe37b5509d931e6fb85bcd731be60877751544",
+  "source_description": "All 133 original top-level IGRINS Python scripts retained; exported copies have limited portability changes. Scientific observations and results are external.",
+  "source_python_sha256": {
+    "activate_order7.py": "ed07acbf59303c761dcb254ff554ae921b485732edf925a30d3d1ea007426a94",
+    "adopt_blase_model.py": "259dec51ea98d7547407716c60892cae6e172f54437afe2f1ee26a75fecc447d",
+    "adopt_telluric_model.py": "0aa8dc924d209255400f95de438b4da1d401e0613175f2c35dd3fffa7f90b2d7",
+    "analyze_poly5_spectral.py": "1260d6b2fd9abe00b6556de143fe670087e256f76cb6f0b15cafe24e7d657d8b",
+    "analyze_poly5_temporal.py": "035a2224b696816dd1ecb5b9018517e5be3e898612abe737f6e084b4fef682db",
+    "assemble_restored_issue.py": "3bb241898f13c64f4cf272a59a6380da7948c343a5202ef75b3efd16e3e82745",
+    "assess_nonstellar_residuals.py": "8636350ca82d14c523732ea44a9c453ddb3ce90387d442b1618736bf6e99adfa",
+    "atmosphere_profile.py": "0f539ec43a5b91c9ffc3d6302e84902c4cfaf99f3de55fbe0ed9f2c9d09d210b",
+    "audit_background_wavelength.py": "f4b2445b0d2417aa29b5e7791798575a3c8a75febe5f735d2b2fda147ad9d525",
+    "audit_hot_water_mask_stress.py": "88c5640866c24180184bfb865d18e669a34644b7875c3d10af5f024f89fb68a0",
+    "audit_line_shape_precision.py": "8ce94e203a823325da5fb7320630d2525e2325a59b92e7265044c5d1f8f7c1b5",
+    "audit_line_shape_saved.py": "c73737476e2c0c5d2b6a34725f52d4a79e3b070696cc01a092564f7ec41b4a6a",
+    "audit_line_strength.py": "35746a5f1a0724488ebae26ce3c4e82e612c0660c67d0a67de9b9d9e2612424d",
+    "audit_nonstellar_budget.py": "923f0328c8db84abd58f4510cffe62f9e6a79a82aa47d573f3007c6d54fe9fb4",
+    "audit_poly5_budget.py": "c21dc0d4a244e3e584039c399c006945a4d0d4935acfe21f7d85c1dda80500cd",
+    "audit_pressure_sensitivity.py": "b82969b7f8ed2345a7c2d96ecaaf34fb9108ec9223510e59f143a8c004d5c781",
+    "audit_protected_wavenumber_mask.py": "ddc9d8ccea6603a8bb54a0f4e8ae8bceb3231fedb7fa0d7b5241cf9c1046811a",
+    "audit_quadratic_strength.py": "5a2138c7dd3e4aba5b7b6383ccf9d5ac7e168e79d87a8ca8c84ef73a78db986d",
+    "audit_relaxed_strength.py": "f2336d704d1cc875d5179f96156ae9d58286d53e631c5b7d6f44ef4575b5e03b",
+    "audit_smooth_residuals.py": "514e26e1b600f94b8ea97694b0e251ce36e857b28c1b49c599583acf88b2e3db",
+    "audit_vertical_profile.py": "48fc70ddc92d0bfe9abfa0b6ed82e17f05ecece0f7d030d0ceee61b95ea46540",
+    "audit_wavenumber_mask_signal.py": "159ce25a8564f90f6085e4d6836d9acb291bea712576f5a99c8e29caf7029c21",
+    "audit_wavenumber_mask_stress.py": "44bdca1f2b9d33c51e05b403199f0bb54014420cd2dd79f619066e70ad96fdb6",
+    "audit_wavenumber_masks.py": "5a512c056d716ffc8dc1828db03d283a7a0ff4436745524010e3014cab8d3777",
+    "blase_stellar.py": "523346d98ab9ae0bc3b0a5482429ebc2464db0bd69ee2fb5dba879865de5ed83",
+    "check_background_wavelength_planet.py": "13d51513cf7aeca1bb202157ff9ae8e5dd5ff92ab98659df370079a23aee5629",
+    "check_blase_planet.py": "3cf71a7f095ccebe42de4197a51b3ed1e91a94b0667cb0aeb50bb897d737e00a",
+    "check_hapi_voigt.py": "d00e25c90800361efb6ca98d3ff089dc89712ad82adb9db02bfd62fcf8925f93",
+    "check_hot_water_masks.py": "be82ac4265d7e9184379ed8b0d95e71e28301ba87ec15845ec382bb4a970cda8",
+    "check_hydrostatic_columns.py": "3908ef3cbf33ead574f8da5482c894f2b7706f7f72e36db58e2fc8e7a78fe6a3",
+    "check_investigation.py": "acd673d84622c39328000c1e1902f56fd39159c4ac656e30702518a6d0738b01",
+    "check_joint.py": "9e5a281923bac95cd0aeda0d134917543ba2928965be2aa4b471f5ea383cc7af",
+    "check_joint_outputs.py": "faf2118304ea65d7e98a2cd46eae2bbf2a053ef4c0340c584a2cbe6017a3bc29",
+    "check_line_mixing_range.py": "bad77e0a9306d0f96a7ac120b373bfceb8b59b0db661acff67d7ec36f06ddff5",
+    "check_line_shape_planet.py": "cd02a24c50628a75400decb774e6190b38d92129e5048caaa9a82ec5bdc48ebd",
+    "check_line_shape_precision.py": "6717a685c70bba13ff77507e74dbb8ad7a07137244d82b3417c049934beb91e1",
+    "check_line_shape_precision_alternatives.py": "60c2b0ad9df422923fb53b7740190244920fec81c7279f8448252bfc13eab86c",
+    "check_missing_feature.py": "ae9ffbd3f4e3314c71fb32864dcc7f327f23ac494737088876943bb0d5391ddd",
+    "check_n2_cia.py": "3b2111dbae219adad887d313690e78e1c69eeaec366960a68673731f4a5349d5",
+    "check_opacity_completeness.py": "73dbe59f984b97959c3d2741e327ef39e391c6920e7a924a5bf3ef2792a860b3",
+    "check_order7.py": "34dc8f00281ff82a1cf87be098ed06db5d59eb31cfdc73d2a1abaaf1a326f2cb",
+    "check_order7_precision.py": "d3baff1ae1e869d754039c4e195c6bd9351829bfeb7cbcef1c64badd1ad3f209",
+    "check_profile_opacity.py": "9c1f652d613a86f617df81d1d416d4047420e314bbb9617cc8a0e7048a39b612",
+    "check_quadratic_strength_planet.py": "4c80dfe65997f080bf9fc851b0b603aa34bb3d684b9566dcea24f980cc258695",
+    "check_relaxed_strength_planet.py": "7623845a3d24ed37c0648dc1302b6faf30a686e7b551f9040ea5e589a8f258eb",
+    "check_smooth_signal.py": "009c03aca75e2b77ecb6775a0e77fe149fb970e7cdb9219f04ca7cde78ef9f6a",
+    "check_strength_planet.py": "a56c3d34f7e4ae98ada4f33c625a1802b1b82780caac7bf622073f120742257c",
+    "check_telluric_focus.py": "7f0ac1bfda7a7ae2643813f4a4be540960960bb15d0a323729ea6d8ddc88b6ff",
+    "check_transformerpayne_stellar_control.py": "9a3745e9a5335c9d815e690f67182c137981146d4ef95f8072b30b53b55ad83b",
+    "check_unknown_strength_planet.py": "4c798fb35133ac004f39b79bcb32c6152416dfdaca73b63eed9bdcfd92a408ab",
+    "check_wavenumber_mask_signal.py": "4d25754d3ce9388ebf8049aeba24aecc207b4770bf9e5b31cc7adcf70d354942",
+    "check_wavenumber_protected_mask_stress.py": "c3841dcbed3db914906b23475f241e017a360b617438a69251c29d05ff428dbe",
+    "compare_advanced_opacity.py": "8d46b0968181654824b0a5a50ece618a9c4fb1dcc511b45138ee0f62351b485c",
+    "compare_temporal_models.py": "3cfff53a92c25c8a7e87f0ec382bdad6995d714238ccaef456f5108ea3268a50",
+    "compare_transformerpayne.py": "5307746d7ff530cc4181aa8601c3ce9dcdeafc4f3e23b4464ce9214b4514dcdd",
+    "decompose_poly5.py": "4d1a513156ce6d4e106eab930b2f2d299f05fc99ad18265d5dd4cb17393fb7ec",
+    "design_protected_wavenumber_mask.py": "c0fc696fa2e3b63239acec3a39a6f1c470035eeda26f00626ce4d039029b4ae5",
+    "design_wavenumber_masks.py": "9100a9ef8a647c2aced36ec3d2fef1a5982e1ae881fb3f0d7850ec7d07371458",
+    "diagnose_4820.py": "0caccadb682a2753109b87a26009a7a5d4723dd20b6dcc85a566fab1796ee078",
+    "diagnose_background.py": "9bfbe3d3d5f6f95606c543a5118233c44d08c14b44076fce1edfa678413d27d2",
+    "diagnose_crossnight.py": "d9f95c705cf8112b1d8440b0efb9939cf426968c4871b99b6b49dad02fac216a",
+    "diagnose_line_parameters.py": "d44c639f47c61c07112e77811a554613395a00552f2e45338a1813d3f1c41f4e",
+    "diagnose_order7_4383_profile.py": "38db594a93475b27bc374ae252289acee061b5156c2a6342d4ab1a4eb6ded234",
+    "diagnose_order7_4383_telluric.py": "ab36ad0b886cb4e89c7a2b687b7c816df67a6a515405f740cfc2dd960b957283",
+    "diagnose_order7_species.py": "cfc18f1b91be88f4fe34966145e5fae61da8b0ee510de580af5f9fe83ebd0437",
+    "diagnose_pressure_sensitivity.py": "0acc17276857b054f127873d7f4a29ffff22a02ad129bbdd814514f38b9a5a99",
+    "diagnose_quadratic_strength.py": "13fbbde14e1d602c935eb31d87d36892c81a03d6b87ba0a11a7cbb414221e697",
+    "diagnose_relaxed_strength.py": "69dd8163ecf0db01e4ca4a4ad7521aeda11e4a06539936b1483c865e45de6a84",
+    "diagnose_residuals.py": "94e147e93ef8f48f49aff9a00e4959a7e081021fffcfaa6836efa39acf7cdc63",
+    "diagnose_spectral_budget.py": "7d483e4998b7c6d7eeeddf2bdebadeb3a5e91342df46a46451890ba813658252",
+    "diagnose_static_residual.py": "7ca8c55348260a4c665c4c788029fcc0120b92c3c72a3743dc796d4dbd42eb12",
+    "diagnose_transfer.py": "f91b6fc5a22f2aa1b6cc7bead7409802512e546105f27782b953048681dfcb9f",
+    "diagnose_wavenumber_mask_interval_signal.py": "57c5c96ff967afeaad0d68166c035d45666547d85dbfa7fb5781fa2283d16a1b",
+    "estimate_nonstellar_noise.py": "dcd8b082e43911185946bfc8569f3665bc21f7ab8f12647994facaaf932d9858",
+    "experiment_vertical_profile.py": "8b4ffe24126571834ef9d127964ca31421391325bc2ec24b1c87bdd9422edc1f",
+    "export_line_shape_precision_arrays.py": "83d9d4cbb9bc2ef64ba94be09108b80814290aaa119b8d05b6838cbf3df7f5f5",
+    "export_wavenumber_mask_trials.py": "67102537f459982b447a1609997d738aa2571632c4cee508f048bb58f776d30f",
+    "feature4820_temporal.py": "95224dbd0671a5d6fe81acf72680d5b96aff6e5a6b5e12ba5c23b803f4ae2d08",
+    "fit_background_wavelength.py": "37e5039999f0b4cda345da62c25508168399a15401bad43b48781091c77133ba",
+    "fit_blase_stellar.py": "8cf90579ee76b1d209b9550f82ef9cd08577e7db6e0464989c25a8c2c242fcb8",
+    "fit_crossnight_feature.py": "0d6641799307cda51dde015f08a72d4ba800bba75e3243de2f0fddecdcc0adfc",
+    "fit_joint.py": "c120c3d16b30f017811bccfa130f5f680914c9b2cae2a3b0ea2f57af796166c2",
+    "fit_line_shapes.py": "1c97c69560e33cef352511653bea14490cdfb7beb16e7bb43b6055fe18cd18bd",
+    "fit_line_strength.py": "41f4a66d53cb26044859bc23f9175d067379cd2234a92ee31e4e7d5e119e2982",
+    "fit_order7_stellar.py": "d4582a7391b542b18ae7a22ff836fc4cac32e382525ef183dd798b48620f57db",
+    "fit_quadratic_strength.py": "a63330ab3552f3c9c9da3ef1773c752b754e0d6a41bedea4a63c851c1639e725",
+    "fit_relaxed_strength.py": "e059dfbdb45210509d61202fea29d17a72cb0ffb0d1ab5c098f52ddbccdf3206",
+    "fit_telluric.py": "d86311e5f8fa921294df85cc69fee1af21b0da2b8d371abe14ff3b9908c51be4",
+    "fit_transformerpayne_elements.py": "faee03901c031bb2323d4f921c63cfeb6e47c3c7763a06dd7a4ee8d7cdf24908",
+    "fit_transformerpayne_labels.py": "97d959dc8aaa0b967b6cc35691396648006e4de6db2b20719c85dec459239941",
+    "fit_transformerpayne_stellar_control.py": "b5f5f1cab5edc0bf09afbe7d2f1cfd20c567f42deedf29b895f19c275a0602fd",
+    "fit_unknown_strength.py": "454e1d4149ab1cf2dbcbb6f03cff6dff42c0f6c9c3feb3d8164bc5b7cf79e376",
+    "fit_wavenumber_masks.py": "6c33ed6358fe29ee05bbfc869bf65b01c469adbb8f52a6d389fb8eb9a6f80157",
+    "hitran_cache.py": "e4d39d5581810765f06f7880afcfec9aebed50379f4852a0478f429f4395bcbb",
+    "inspect_data.py": "71ba6c85e7266aef3805c33ab5be8e8d1ad0c7faf4615b32c1dc3377b63fee11",
+    "interpret_line_shapes.py": "12eef8a76efbaee99704c2b1679960f8395954a1f07938041837996f999f04ae",
+    "line_strength_support.py": "27ac8b7a921b965368b2f600b2ebe3dd67cbcb6902db1a4e8bb9153432153f08",
+    "overlay_enuma.py": "f23a22fc9fc075c963bca92a25ac139ce1870a902ef49378e50fbefda1aa60e1",
+    "plot_current_blase_report.py": "fd07937e0228b390d3487e225eba5a19aca562b2eefc6b963e8cea17c0e012a0",
+    "plot_premask_report.py": "e6cf445cadea4bc43a889965eaab02f619555eaa66bc187eb8c38afdd2c9ee0b",
+    "plot_profile_trials.py": "d3ebae43c3598660c81bd9ab300709e43a63c4a8ae5bca459221184f58ac67aa",
+    "plot_restored_igrins_report.py": "f3d55e28706245f366e469fe5ca4a5119f6a11cc9ebed3dc01108a346975ff4b",
+    "prepare_advanced_lines.py": "675d15d0eeb91d2a5c7fad80f2784f20b6dd59b72c0aaca4e1ad759b6c9dc4ff",
+    "prepare_advanced_tau.py": "b6bc02151637e08aa84a15926ac4521ae68db75188d156f7d28584fc33d21f18",
+    "prepare_atmosphere.py": "c08cba1ac4a797d54213baf6997a1707902629393adc8e88f09d47796590bd55",
+    "prepare_crossnight_data.py": "cdecb68673bcbc3d6a56cf6d1053cd1cc4de76f06e5567f4e7eef2a4415a5766",
+    "prepare_hitran.py": "54f83d68dc95697d6e2b36ee8c94555345c127fcf4f0f47c276182b5c90dcdee",
+    "prepare_premask_stellar.py": "868c75c4eccfd33a5da0b692c8d384af74825dd029ecd1bd2183999741c21a21",
+    "prepare_stellar.py": "ff0b456831d73d9183b51bc33540fac3e9b9304f9108fa9126ce3a1e2f9d8a9d",
+    "prepare_transformerpayne.py": "161ceda4b13b5c772078efc9171a603ca8cb6c7153e762161a91a278869b80f5",
+    "prepare_water_sdv_sensitivity.py": "0cedc0c41dff4f7a391bf3ba0e999590cb1d170c1e20c7484cec83636ce66c48",
+    "profile_background_wavelength_strength.py": "794c3cf36e121f82623e7423d7cda4679a504939bbcffa463ef4a8b45941b6a7",
+    "profile_opacity.py": "4ddab8489587521f52ef5f19a54c403b801b919263e5f1d2bbdbaf94f7a19b15",
+    "quadratic_ip_response.py": "8fd75b3a71426c682612193d8a5518f87a4be114f908e4b07482c64baae1f0fb",
+    "refine_telluric_mask.py": "3e73f44cc3ee9daaa05e28825993f2e67edf685ec34ed52483b4749d78a26448",
+    "report_blase_stellar.py": "babcba68312a3cc24ce9d08199406b88d86d492a4e17723708f6973100d7a0ea",
+    "report_order7.py": "f681880e8ae0b2c7d5f3ae904e13133dbab1ff4616a331296b26e90be9fddac3",
+    "report_transformerpayne_elements.py": "7af95bc253f289a37921a19d0503cdb68117ab550c8d1d96b5db55972e1c4ea5",
+    "report_transformerpayne_stellar_control.py": "5c0127be5574fc102f415798812298c798a222f219d13697800c3e54e056accd",
+    "report_unknown_strength.py": "6f26b573c64d0d462aa03e57508c3d615a9ff83549efc0e01d8d325d6d228904",
+    "restore_comparison_tables.py": "5ad41eadf72f0562eb9e21413de4f4327904f64509609103d7889a8402e37c24",
+    "run_order7.py": "22c677f3a553ebcf4ce6cb9fb42a100406df90ae566df39d6f47fd862330a707",
+    "select_telluric_pixels.py": "a391c430a41b7d3a8dc1e716ea29402096f44c0991d7e83dfeb5ae66cacce07e",
+    "smooth_residuals.py": "a8337bf12b92ecc4fb1ff39880f9f7800622f551d21e8f614c7f0557c1e3b7a6",
+    "stellar_template.py": "6d1f591b70e4d7e4bf2cf26eae1960ff5eda04316d5b9baccd562d8f95938338",
+    "summarize_fits.py": "0d1b138eea7ef2e42332b38015bba13d258ca71f502b55bb9ad605098d0d89e6",
+    "summarize_investigation.py": "5d91fc0aefd2330fa032d523f9a45a46469247af13005205775fefd214ad8296",
+    "summarize_joint.py": "6f817cfde613c7237d5dd1ffd1f5fc4ccbfde05d293cc2b046d9425b96d88b4b",
+    "summarize_residual_experiments.py": "eb53c39066e02a226b2fc050ec09d4da385230418d77bf321931244fc8e22f41",
+    "summarize_smoothing.py": "0a844367588c58cda18db5d365976d84ede153a1c9219a2654e7638e39b6a66f",
+    "summarize_telluric_focus.py": "4badf5718f9536e1767d8c07c6150aa033ed87a3170a82daa71f26cb574defaf",
+    "transformerpayne_labels.py": "ad599890c8242822d8aa449b349f9090bd07c25749c66b633ba30249e92f10ed",
+    "validate_line_shape_solution.py": "a5a0261daa3e4942eb46720067df9e9c3931b7ac3f435c8d07777f628121866a"
+  },
+  "export_python_sha256": {
+    "activate_order7.py": "942927fa8af5bdea97c3454a8684945dcc813eb90e2fb99655a6eb35a828d983",
+    "adopt_blase_model.py": "259dec51ea98d7547407716c60892cae6e172f54437afe2f1ee26a75fecc447d",
+    "adopt_telluric_model.py": "0aa8dc924d209255400f95de438b4da1d401e0613175f2c35dd3fffa7f90b2d7",
+    "analyze_poly5_spectral.py": "1260d6b2fd9abe00b6556de143fe670087e256f76cb6f0b15cafe24e7d657d8b",
+    "analyze_poly5_temporal.py": "035a2224b696816dd1ecb5b9018517e5be3e898612abe737f6e084b4fef682db",
+    "assemble_restored_issue.py": "3bb241898f13c64f4cf272a59a6380da7948c343a5202ef75b3efd16e3e82745",
+    "assess_nonstellar_residuals.py": "8636350ca82d14c523732ea44a9c453ddb3ce90387d442b1618736bf6e99adfa",
+    "atmosphere_profile.py": "0f539ec43a5b91c9ffc3d6302e84902c4cfaf99f3de55fbe0ed9f2c9d09d210b",
+    "audit_background_wavelength.py": "14ab9f66ee587cf1f4021bb0256255267bde5e0819f9879811091d32ac40ba8e",
+    "audit_hot_water_mask_stress.py": "88c5640866c24180184bfb865d18e669a34644b7875c3d10af5f024f89fb68a0",
+    "audit_line_shape_precision.py": "8ce94e203a823325da5fb7320630d2525e2325a59b92e7265044c5d1f8f7c1b5",
+    "audit_line_shape_saved.py": "c73737476e2c0c5d2b6a34725f52d4a79e3b070696cc01a092564f7ec41b4a6a",
+    "audit_line_strength.py": "35746a5f1a0724488ebae26ce3c4e82e612c0660c67d0a67de9b9d9e2612424d",
+    "audit_nonstellar_budget.py": "923f0328c8db84abd58f4510cffe62f9e6a79a82aa47d573f3007c6d54fe9fb4",
+    "audit_poly5_budget.py": "c21dc0d4a244e3e584039c399c006945a4d0d4935acfe21f7d85c1dda80500cd",
+    "audit_pressure_sensitivity.py": "b82969b7f8ed2345a7c2d96ecaaf34fb9108ec9223510e59f143a8c004d5c781",
+    "audit_protected_wavenumber_mask.py": "ddc9d8ccea6603a8bb54a0f4e8ae8bceb3231fedb7fa0d7b5241cf9c1046811a",
+    "audit_quadratic_strength.py": "5a2138c7dd3e4aba5b7b6383ccf9d5ac7e168e79d87a8ca8c84ef73a78db986d",
+    "audit_relaxed_strength.py": "f2336d704d1cc875d5179f96156ae9d58286d53e631c5b7d6f44ef4575b5e03b",
+    "audit_smooth_residuals.py": "514e26e1b600f94b8ea97694b0e251ce36e857b28c1b49c599583acf88b2e3db",
+    "audit_vertical_profile.py": "48fc70ddc92d0bfe9abfa0b6ed82e17f05ecece0f7d030d0ceee61b95ea46540",
+    "audit_wavenumber_mask_signal.py": "159ce25a8564f90f6085e4d6836d9acb291bea712576f5a99c8e29caf7029c21",
+    "audit_wavenumber_mask_stress.py": "44bdca1f2b9d33c51e05b403199f0bb54014420cd2dd79f619066e70ad96fdb6",
+    "audit_wavenumber_masks.py": "5a512c056d716ffc8dc1828db03d283a7a0ff4436745524010e3014cab8d3777",
+    "blase_stellar.py": "523346d98ab9ae0bc3b0a5482429ebc2464db0bd69ee2fb5dba879865de5ed83",
+    "check_background_wavelength_planet.py": "13d51513cf7aeca1bb202157ff9ae8e5dd5ff92ab98659df370079a23aee5629",
+    "check_blase_planet.py": "3cf71a7f095ccebe42de4197a51b3ed1e91a94b0667cb0aeb50bb897d737e00a",
+    "check_hapi_voigt.py": "d00e25c90800361efb6ca98d3ff089dc89712ad82adb9db02bfd62fcf8925f93",
+    "check_hot_water_masks.py": "be82ac4265d7e9184379ed8b0d95e71e28301ba87ec15845ec382bb4a970cda8",
+    "check_hydrostatic_columns.py": "3908ef3cbf33ead574f8da5482c894f2b7706f7f72e36db58e2fc8e7a78fe6a3",
+    "check_investigation.py": "acd673d84622c39328000c1e1902f56fd39159c4ac656e30702518a6d0738b01",
+    "check_joint.py": "9e5a281923bac95cd0aeda0d134917543ba2928965be2aa4b471f5ea383cc7af",
+    "check_joint_outputs.py": "faf2118304ea65d7e98a2cd46eae2bbf2a053ef4c0340c584a2cbe6017a3bc29",
+    "check_line_mixing_range.py": "bad77e0a9306d0f96a7ac120b373bfceb8b59b0db661acff67d7ec36f06ddff5",
+    "check_line_shape_planet.py": "cd02a24c50628a75400decb774e6190b38d92129e5048caaa9a82ec5bdc48ebd",
+    "check_line_shape_precision.py": "6717a685c70bba13ff77507e74dbb8ad7a07137244d82b3417c049934beb91e1",
+    "check_line_shape_precision_alternatives.py": "60c2b0ad9df422923fb53b7740190244920fec81c7279f8448252bfc13eab86c",
+    "check_missing_feature.py": "ae9ffbd3f4e3314c71fb32864dcc7f327f23ac494737088876943bb0d5391ddd",
+    "check_n2_cia.py": "3b2111dbae219adad887d313690e78e1c69eeaec366960a68673731f4a5349d5",
+    "check_opacity_completeness.py": "73dbe59f984b97959c3d2741e327ef39e391c6920e7a924a5bf3ef2792a860b3",
+    "check_order7.py": "6caea08cfae4d98c6dfadd14d51f38098af5a685412e4b4721009e26a90eb465",
+    "check_order7_precision.py": "d3baff1ae1e869d754039c4e195c6bd9351829bfeb7cbcef1c64badd1ad3f209",
+    "check_profile_opacity.py": "9c1f652d613a86f617df81d1d416d4047420e314bbb9617cc8a0e7048a39b612",
+    "check_quadratic_strength_planet.py": "4c80dfe65997f080bf9fc851b0b603aa34bb3d684b9566dcea24f980cc258695",
+    "check_relaxed_strength_planet.py": "7623845a3d24ed37c0648dc1302b6faf30a686e7b551f9040ea5e589a8f258eb",
+    "check_smooth_signal.py": "009c03aca75e2b77ecb6775a0e77fe149fb970e7cdb9219f04ca7cde78ef9f6a",
+    "check_strength_planet.py": "a56c3d34f7e4ae98ada4f33c625a1802b1b82780caac7bf622073f120742257c",
+    "check_telluric_focus.py": "7f0ac1bfda7a7ae2643813f4a4be540960960bb15d0a323729ea6d8ddc88b6ff",
+    "check_transformerpayne_stellar_control.py": "9a3745e9a5335c9d815e690f67182c137981146d4ef95f8072b30b53b55ad83b",
+    "check_unknown_strength_planet.py": "4c798fb35133ac004f39b79bcb32c6152416dfdaca73b63eed9bdcfd92a408ab",
+    "check_wavenumber_mask_signal.py": "4d25754d3ce9388ebf8049aeba24aecc207b4770bf9e5b31cc7adcf70d354942",
+    "check_wavenumber_protected_mask_stress.py": "c3841dcbed3db914906b23475f241e017a360b617438a69251c29d05ff428dbe",
+    "compare_advanced_opacity.py": "8d46b0968181654824b0a5a50ece618a9c4fb1dcc511b45138ee0f62351b485c",
+    "compare_temporal_models.py": "3cfff53a92c25c8a7e87f0ec382bdad6995d714238ccaef456f5108ea3268a50",
+    "compare_transformerpayne.py": "5307746d7ff530cc4181aa8601c3ce9dcdeafc4f3e23b4464ce9214b4514dcdd",
+    "decompose_poly5.py": "4d1a513156ce6d4e106eab930b2f2d299f05fc99ad18265d5dd4cb17393fb7ec",
+    "design_protected_wavenumber_mask.py": "c0fc696fa2e3b63239acec3a39a6f1c470035eeda26f00626ce4d039029b4ae5",
+    "design_wavenumber_masks.py": "9100a9ef8a647c2aced36ec3d2fef1a5982e1ae881fb3f0d7850ec7d07371458",
+    "diagnose_4820.py": "0caccadb682a2753109b87a26009a7a5d4723dd20b6dcc85a566fab1796ee078",
+    "diagnose_background.py": "9bfbe3d3d5f6f95606c543a5118233c44d08c14b44076fce1edfa678413d27d2",
+    "diagnose_crossnight.py": "d9f95c705cf8112b1d8440b0efb9939cf426968c4871b99b6b49dad02fac216a",
+    "diagnose_line_parameters.py": "d44c639f47c61c07112e77811a554613395a00552f2e45338a1813d3f1c41f4e",
+    "diagnose_order7_4383_profile.py": "38db594a93475b27bc374ae252289acee061b5156c2a6342d4ab1a4eb6ded234",
+    "diagnose_order7_4383_telluric.py": "ab36ad0b886cb4e89c7a2b687b7c816df67a6a515405f740cfc2dd960b957283",
+    "diagnose_order7_species.py": "cfc18f1b91be88f4fe34966145e5fae61da8b0ee510de580af5f9fe83ebd0437",
+    "diagnose_pressure_sensitivity.py": "0acc17276857b054f127873d7f4a29ffff22a02ad129bbdd814514f38b9a5a99",
+    "diagnose_quadratic_strength.py": "13fbbde14e1d602c935eb31d87d36892c81a03d6b87ba0a11a7cbb414221e697",
+    "diagnose_relaxed_strength.py": "69dd8163ecf0db01e4ca4a4ad7521aeda11e4a06539936b1483c865e45de6a84",
+    "diagnose_residuals.py": "94e147e93ef8f48f49aff9a00e4959a7e081021fffcfaa6836efa39acf7cdc63",
+    "diagnose_spectral_budget.py": "7d483e4998b7c6d7eeeddf2bdebadeb3a5e91342df46a46451890ba813658252",
+    "diagnose_static_residual.py": "7ca8c55348260a4c665c4c788029fcc0120b92c3c72a3743dc796d4dbd42eb12",
+    "diagnose_transfer.py": "f91b6fc5a22f2aa1b6cc7bead7409802512e546105f27782b953048681dfcb9f",
+    "diagnose_wavenumber_mask_interval_signal.py": "57c5c96ff967afeaad0d68166c035d45666547d85dbfa7fb5781fa2283d16a1b",
+    "estimate_nonstellar_noise.py": "dcd8b082e43911185946bfc8569f3665bc21f7ab8f12647994facaaf932d9858",
+    "experiment_vertical_profile.py": "8b4ffe24126571834ef9d127964ca31421391325bc2ec24b1c87bdd9422edc1f",
+    "export_line_shape_precision_arrays.py": "83d9d4cbb9bc2ef64ba94be09108b80814290aaa119b8d05b6838cbf3df7f5f5",
+    "export_wavenumber_mask_trials.py": "67102537f459982b447a1609997d738aa2571632c4cee508f048bb58f776d30f",
+    "feature4820_temporal.py": "95224dbd0671a5d6fe81acf72680d5b96aff6e5a6b5e12ba5c23b803f4ae2d08",
+    "fit_background_wavelength.py": "37e5039999f0b4cda345da62c25508168399a15401bad43b48781091c77133ba",
+    "fit_blase_stellar.py": "8cf90579ee76b1d209b9550f82ef9cd08577e7db6e0464989c25a8c2c242fcb8",
+    "fit_crossnight_feature.py": "0d6641799307cda51dde015f08a72d4ba800bba75e3243de2f0fddecdcc0adfc",
+    "fit_joint.py": "c120c3d16b30f017811bccfa130f5f680914c9b2cae2a3b0ea2f57af796166c2",
+    "fit_line_shapes.py": "1c97c69560e33cef352511653bea14490cdfb7beb16e7bb43b6055fe18cd18bd",
+    "fit_line_strength.py": "41f4a66d53cb26044859bc23f9175d067379cd2234a92ee31e4e7d5e119e2982",
+    "fit_order7_stellar.py": "83a30902bf22c6cbbb03f6d5bde11418b3426bf96ca25495078d7169ef6410c0",
+    "fit_quadratic_strength.py": "a63330ab3552f3c9c9da3ef1773c752b754e0d6a41bedea4a63c851c1639e725",
+    "fit_relaxed_strength.py": "e059dfbdb45210509d61202fea29d17a72cb0ffb0d1ab5c098f52ddbccdf3206",
+    "fit_telluric.py": "d86311e5f8fa921294df85cc69fee1af21b0da2b8d371abe14ff3b9908c51be4",
+    "fit_transformerpayne_elements.py": "faee03901c031bb2323d4f921c63cfeb6e47c3c7763a06dd7a4ee8d7cdf24908",
+    "fit_transformerpayne_labels.py": "97d959dc8aaa0b967b6cc35691396648006e4de6db2b20719c85dec459239941",
+    "fit_transformerpayne_stellar_control.py": "b5f5f1cab5edc0bf09afbe7d2f1cfd20c567f42deedf29b895f19c275a0602fd",
+    "fit_unknown_strength.py": "454e1d4149ab1cf2dbcbb6f03cff6dff42c0f6c9c3feb3d8164bc5b7cf79e376",
+    "fit_wavenumber_masks.py": "6c33ed6358fe29ee05bbfc869bf65b01c469adbb8f52a6d389fb8eb9a6f80157",
+    "hitran_cache.py": "e4d39d5581810765f06f7880afcfec9aebed50379f4852a0478f429f4395bcbb",
+    "inspect_data.py": "71ba6c85e7266aef3805c33ab5be8e8d1ad0c7faf4615b32c1dc3377b63fee11",
+    "interpret_line_shapes.py": "12eef8a76efbaee99704c2b1679960f8395954a1f07938041837996f999f04ae",
+    "line_strength_support.py": "27ac8b7a921b965368b2f600b2ebe3dd67cbcb6902db1a4e8bb9153432153f08",
+    "overlay_enuma.py": "f23a22fc9fc075c963bca92a25ac139ce1870a902ef49378e50fbefda1aa60e1",
+    "plot_current_blase_report.py": "fd07937e0228b390d3487e225eba5a19aca562b2eefc6b963e8cea17c0e012a0",
+    "plot_premask_report.py": "e6cf445cadea4bc43a889965eaab02f619555eaa66bc187eb8c38afdd2c9ee0b",
+    "plot_profile_trials.py": "d3ebae43c3598660c81bd9ab300709e43a63c4a8ae5bca459221184f58ac67aa",
+    "plot_restored_igrins_report.py": "f3d55e28706245f366e469fe5ca4a5119f6a11cc9ebed3dc01108a346975ff4b",
+    "prepare_advanced_lines.py": "675d15d0eeb91d2a5c7fad80f2784f20b6dd59b72c0aaca4e1ad759b6c9dc4ff",
+    "prepare_advanced_tau.py": "b6bc02151637e08aa84a15926ac4521ae68db75188d156f7d28584fc33d21f18",
+    "prepare_atmosphere.py": "c08cba1ac4a797d54213baf6997a1707902629393adc8e88f09d47796590bd55",
+    "prepare_crossnight_data.py": "cdecb68673bcbc3d6a56cf6d1053cd1cc4de76f06e5567f4e7eef2a4415a5766",
+    "prepare_data.py": "53097b24016a90cd1cfce2624caacbf437ccb11957bac43cb638575881f8dd6b",
+    "prepare_hitran.py": "54f83d68dc95697d6e2b36ee8c94555345c127fcf4f0f47c276182b5c90dcdee",
+    "prepare_order7_scope.py": "8dcb438c46e22369d257ac648b9e04f5fb42fd84d74f1e9e0786f0e7a74ba017",
+    "prepare_premask_stellar.py": "9dd796354ee29d92db17c6fa3384c49fbb77fc46a9ffbecbeec8e5b07f88ba50",
+    "prepare_stellar.py": "ff0b456831d73d9183b51bc33540fac3e9b9304f9108fa9126ce3a1e2f9d8a9d",
+    "prepare_transformerpayne.py": "161ceda4b13b5c772078efc9171a603ca8cb6c7153e762161a91a278869b80f5",
+    "prepare_water_sdv_sensitivity.py": "0cedc0c41dff4f7a391bf3ba0e999590cb1d170c1e20c7484cec83636ce66c48",
+    "profile_background_wavelength_strength.py": "794c3cf36e121f82623e7423d7cda4679a504939bbcffa463ef4a8b45941b6a7",
+    "profile_opacity.py": "4ddab8489587521f52ef5f19a54c403b801b919263e5f1d2bbdbaf94f7a19b15",
+    "quadratic_ip_response.py": "8fd75b3a71426c682612193d8a5518f87a4be114f908e4b07482c64baae1f0fb",
+    "refine_telluric_mask.py": "3e73f44cc3ee9daaa05e28825993f2e67edf685ec34ed52483b4749d78a26448",
+    "report_blase_stellar.py": "babcba68312a3cc24ce9d08199406b88d86d492a4e17723708f6973100d7a0ea",
+    "report_order7.py": "1f293b58dabcf08d276e04d3290a10d30453cbeb6e4df5d6b532bdf487616f09",
+    "report_transformerpayne_elements.py": "7af95bc253f289a37921a19d0503cdb68117ab550c8d1d96b5db55972e1c4ea5",
+    "report_transformerpayne_stellar_control.py": "5c0127be5574fc102f415798812298c798a222f219d13697800c3e54e056accd",
+    "report_unknown_strength.py": "6f26b573c64d0d462aa03e57508c3d615a9ff83549efc0e01d8d325d6d228904",
+    "restore_comparison_tables.py": "5ad41eadf72f0562eb9e21413de4f4327904f64509609103d7889a8402e37c24",
+    "run_order7.py": "5eae1a2b80d729a4153de852896579659f92153c64fa95b38a32ad411c6d34d1",
+    "select_telluric_pixels.py": "a391c430a41b7d3a8dc1e716ea29402096f44c0991d7e83dfeb5ae66cacce07e",
+    "smooth_residuals.py": "a8337bf12b92ecc4fb1ff39880f9f7800622f551d21e8f614c7f0557c1e3b7a6",
+    "stellar_template.py": "6d1f591b70e4d7e4bf2cf26eae1960ff5eda04316d5b9baccd562d8f95938338",
+    "summarize_fits.py": "0d1b138eea7ef2e42332b38015bba13d258ca71f502b55bb9ad605098d0d89e6",
+    "summarize_investigation.py": "5d91fc0aefd2330fa032d523f9a45a46469247af13005205775fefd214ad8296",
+    "summarize_joint.py": "6f817cfde613c7237d5dd1ffd1f5fc4ccbfde05d293cc2b046d9425b96d88b4b",
+    "summarize_residual_experiments.py": "eb53c39066e02a226b2fc050ec09d4da385230418d77bf321931244fc8e22f41",
+    "summarize_smoothing.py": "0a844367588c58cda18db5d365976d84ede153a1c9219a2654e7638e39b6a66f",
+    "summarize_telluric_focus.py": "4badf5718f9536e1767d8c07c6150aa033ed87a3170a82daa71f26cb574defaf",
+    "transformerpayne_labels.py": "ad599890c8242822d8aa449b349f9090bd07c25749c66b633ba30249e92f10ed",
+    "validate_line_shape_solution.py": "a5a0261daa3e4942eb46720067df9e9c3931b7ac3f435c8d07777f628121866a"
+  },
+  "portability_modified_scripts": [
+    "activate_order7.py",
+    "audit_background_wavelength.py",
+    "check_order7.py",
+    "fit_order7_stellar.py",
+    "prepare_premask_stellar.py",
+    "report_order7.py",
+    "run_order7.py"
+  ],
+  "new_scripts": [
+    "prepare_data.py",
+    "prepare_order7_scope.py"
+  ],
+  "files_excluding_this_manifest": {
+    "LICENSE": {
+      "bytes": 1072,
+      "sha256": "db724a5f869394580dde380be1784997f0b9e5ee6ddd9966dc727129396afc8e"
+    },
+    "requirements.txt": {
+      "bytes": 309,
+      "sha256": "e3b0ac389e95e961ad6e4ed0649f5b823e42bf4d188516fc627179b03ec7cd35"
+    },
+    "README.md": {
+      "bytes": 6585,
+      "sha256": "a02651b40395f6b5d04843053d865a628c47fc08a4a2c2fc2f450b6c095fbe75"
+    },
+    ".gitignore": {
+      "bytes": 4973,
+      "sha256": "56f410cbcdbfd7d265793d4d36b2a06f9518bc07561003785bf4200ced468ca7"
+    },
+    "pyproject.toml": {
+      "bytes": 64,
+      "sha256": "f86b529005c87afce62aac694d1a4fd1f3411ea33b4039476d322590022e8500"
+    },
+    "requirements-dev.txt": {
+      "bytes": 34,
+      "sha256": "b0a7d247aa0d498de1e71fd299c79d5022874cf1b36347697f52ba88b194f5f2"
+    },
+    "docs/DATA.md": {
+      "bytes": 8204,
+      "sha256": "d35247bb0bbc5a8fc9eb94d5d6b5e1511f2130ed3b1eda8b7e2932e433f64864"
+    },
+    "docs/REFERENCE_RESULTS.md": {
+      "bytes": 2639,
+      "sha256": "293dbedcbcd305468526bcde183d9d4593eb70d7e5e3a2de0966afd74d1ffbe2"
+    },
+    "IGRINS/compare_temporal_models.py": {
+      "bytes": 9918,
+      "sha256": "3cfff53a92c25c8a7e87f0ec382bdad6995d714238ccaef456f5108ea3268a50"
+    },
+    "IGRINS/diagnose_relaxed_strength.py": {
+      "bytes": 11654,
+      "sha256": "69dd8163ecf0db01e4ca4a4ad7521aeda11e4a06539936b1483c865e45de6a84"
+    },
+    "IGRINS/check_hot_water_masks.py": {
+      "bytes": 12291,
+      "sha256": "be82ac4265d7e9184379ed8b0d95e71e28301ba87ec15845ec382bb4a970cda8"
+    },
+    "IGRINS/diagnose_static_residual.py": {
+      "bytes": 8535,
+      "sha256": "7ca8c55348260a4c665c4c788029fcc0120b92c3c72a3743dc796d4dbd42eb12"
+    },
+    "IGRINS/audit_line_strength.py": {
+      "bytes": 16129,
+      "sha256": "35746a5f1a0724488ebae26ce3c4e82e612c0660c67d0a67de9b9d9e2612424d"
+    },
+    "IGRINS/adopt_telluric_model.py": {
+      "bytes": 6232,
+      "sha256": "0aa8dc924d209255400f95de438b4da1d401e0613175f2c35dd3fffa7f90b2d7"
+    },
+    "IGRINS/fit_line_shapes.py": {
+      "bytes": 18875,
+      "sha256": "1c97c69560e33cef352511653bea14490cdfb7beb16e7bb43b6055fe18cd18bd"
+    },
+    "IGRINS/check_missing_feature.py": {
+      "bytes": 3019,
+      "sha256": "ae9ffbd3f4e3314c71fb32864dcc7f327f23ac494737088876943bb0d5391ddd"
+    },
+    "IGRINS/check_transformerpayne_stellar_control.py": {
+      "bytes": 3158,
+      "sha256": "9a3745e9a5335c9d815e690f67182c137981146d4ef95f8072b30b53b55ad83b"
+    },
+    "IGRINS/assemble_restored_issue.py": {
+      "bytes": 9325,
+      "sha256": "3bb241898f13c64f4cf272a59a6380da7948c343a5202ef75b3efd16e3e82745"
+    },
+    "IGRINS/summarize_joint.py": {
+      "bytes": 12328,
+      "sha256": "6f817cfde613c7237d5dd1ffd1f5fc4ccbfde05d293cc2b046d9425b96d88b4b"
+    },
+    "IGRINS/audit_poly5_budget.py": {
+      "bytes": 11451,
+      "sha256": "c21dc0d4a244e3e584039c399c006945a4d0d4935acfe21f7d85c1dda80500cd"
+    },
+    "IGRINS/audit_nonstellar_budget.py": {
+      "bytes": 8826,
+      "sha256": "923f0328c8db84abd58f4510cffe62f9e6a79a82aa47d573f3007c6d54fe9fb4"
+    },
+    "IGRINS/summarize_fits.py": {
+      "bytes": 10338,
+      "sha256": "0d1b138eea7ef2e42332b38015bba13d258ca71f502b55bb9ad605098d0d89e6"
+    },
+    "IGRINS/prepare_water_sdv_sensitivity.py": {
+      "bytes": 4131,
+      "sha256": "0cedc0c41dff4f7a391bf3ba0e999590cb1d170c1e20c7484cec83636ce66c48"
+    },
+    "IGRINS/prepare_premask_stellar.py": {
+      "bytes": 6455,
+      "sha256": "9dd796354ee29d92db17c6fa3384c49fbb77fc46a9ffbecbeec8e5b07f88ba50"
+    },
+    "IGRINS/check_profile_opacity.py": {
+      "bytes": 6467,
+      "sha256": "9c1f652d613a86f617df81d1d416d4047420e314bbb9617cc8a0e7048a39b612"
+    },
+    "IGRINS/activate_order7.py": {
+      "bytes": 4585,
+      "sha256": "942927fa8af5bdea97c3454a8684945dcc813eb90e2fb99655a6eb35a828d983"
+    },
+    "IGRINS/prepare_atmosphere.py": {
+      "bytes": 10202,
+      "sha256": "c08cba1ac4a797d54213baf6997a1707902629393adc8e88f09d47796590bd55"
+    },
+    "IGRINS/decompose_poly5.py": {
+      "bytes": 10154,
+      "sha256": "4d1a513156ce6d4e106eab930b2f2d299f05fc99ad18265d5dd4cb17393fb7ec"
+    },
+    "IGRINS/fit_blase_stellar.py": {
+      "bytes": 24044,
+      "sha256": "8cf90579ee76b1d209b9550f82ef9cd08577e7db6e0464989c25a8c2c242fcb8"
+    },
+    "IGRINS/prepare_crossnight_data.py": {
+      "bytes": 1634,
+      "sha256": "cdecb68673bcbc3d6a56cf6d1053cd1cc4de76f06e5567f4e7eef2a4415a5766"
+    },
+    "IGRINS/interpret_line_shapes.py": {
+      "bytes": 14184,
+      "sha256": "12eef8a76efbaee99704c2b1679960f8395954a1f07938041837996f999f04ae"
+    },
+    "IGRINS/check_blase_planet.py": {
+      "bytes": 20614,
+      "sha256": "3cf71a7f095ccebe42de4197a51b3ed1e91a94b0667cb0aeb50bb897d737e00a"
+    },
+    "IGRINS/summarize_investigation.py": {
+      "bytes": 20473,
+      "sha256": "5d91fc0aefd2330fa032d523f9a45a46469247af13005205775fefd214ad8296"
+    },
+    "IGRINS/check_unknown_strength_planet.py": {
+      "bytes": 10078,
+      "sha256": "4c798fb35133ac004f39b79bcb32c6152416dfdaca73b63eed9bdcfd92a408ab"
+    },
+    "IGRINS/check_line_mixing_range.py": {
+      "bytes": 5251,
+      "sha256": "bad77e0a9306d0f96a7ac120b373bfceb8b59b0db661acff67d7ec36f06ddff5"
+    },
+    "IGRINS/fit_relaxed_strength.py": {
+      "bytes": 12981,
+      "sha256": "e059dfbdb45210509d61202fea29d17a72cb0ffb0d1ab5c098f52ddbccdf3206"
+    },
+    "IGRINS/inspect_data.py": {
+      "bytes": 5196,
+      "sha256": "71ba6c85e7266aef3805c33ab5be8e8d1ad0c7faf4615b32c1dc3377b63fee11"
+    },
+    "IGRINS/diagnose_pressure_sensitivity.py": {
+      "bytes": 13365,
+      "sha256": "0acc17276857b054f127873d7f4a29ffff22a02ad129bbdd814514f38b9a5a99"
+    },
+    "IGRINS/assess_nonstellar_residuals.py": {
+      "bytes": 11537,
+      "sha256": "8636350ca82d14c523732ea44a9c453ddb3ce90387d442b1618736bf6e99adfa"
+    },
+    "IGRINS/estimate_nonstellar_noise.py": {
+      "bytes": 17923,
+      "sha256": "dcd8b082e43911185946bfc8569f3665bc21f7ab8f12647994facaaf932d9858"
+    },
+    "IGRINS/report_unknown_strength.py": {
+      "bytes": 10533,
+      "sha256": "6f26b573c64d0d462aa03e57508c3d615a9ff83549efc0e01d8d325d6d228904"
+    },
+    "IGRINS/diagnose_background.py": {
+      "bytes": 6908,
+      "sha256": "9bfbe3d3d5f6f95606c543a5118233c44d08c14b44076fce1edfa678413d27d2"
+    },
+    "IGRINS/check_investigation.py": {
+      "bytes": 14866,
+      "sha256": "acd673d84622c39328000c1e1902f56fd39159c4ac656e30702518a6d0738b01"
+    },
+    "IGRINS/hitran_cache.py": {
+      "bytes": 1861,
+      "sha256": "e4d39d5581810765f06f7880afcfec9aebed50379f4852a0478f429f4395bcbb"
+    },
+    "IGRINS/fit_order7_stellar.py": {
+      "bytes": 13209,
+      "sha256": "83a30902bf22c6cbbb03f6d5bde11418b3426bf96ca25495078d7169ef6410c0"
+    },
+    "IGRINS/audit_background_wavelength.py": {
+      "bytes": 9379,
+      "sha256": "14ab9f66ee587cf1f4021bb0256255267bde5e0819f9879811091d32ac40ba8e"
+    },
+    "IGRINS/prepare_advanced_lines.py": {
+      "bytes": 2787,
+      "sha256": "675d15d0eeb91d2a5c7fad80f2784f20b6dd59b72c0aaca4e1ad759b6c9dc4ff"
+    },
+    "IGRINS/fit_quadratic_strength.py": {
+      "bytes": 17622,
+      "sha256": "a63330ab3552f3c9c9da3ef1773c752b754e0d6a41bedea4a63c851c1639e725"
+    },
+    "IGRINS/summarize_residual_experiments.py": {
+      "bytes": 11474,
+      "sha256": "eb53c39066e02a226b2fc050ec09d4da385230418d77bf321931244fc8e22f41"
+    },
+    "IGRINS/prepare_hitran.py": {
+      "bytes": 3240,
+      "sha256": "54f83d68dc95697d6e2b36ee8c94555345c127fcf4f0f47c276182b5c90dcdee"
+    },
+    "IGRINS/report_transformerpayne_elements.py": {
+      "bytes": 21901,
+      "sha256": "7af95bc253f289a37921a19d0503cdb68117ab550c8d1d96b5db55972e1c4ea5"
+    },
+    "IGRINS/check_line_shape_precision_alternatives.py": {
+      "bytes": 6837,
+      "sha256": "60c2b0ad9df422923fb53b7740190244920fec81c7279f8448252bfc13eab86c"
+    },
+    "IGRINS/check_hapi_voigt.py": {
+      "bytes": 5032,
+      "sha256": "d00e25c90800361efb6ca98d3ff089dc89712ad82adb9db02bfd62fcf8925f93"
+    },
+    "IGRINS/check_line_shape_precision.py": {
+      "bytes": 7551,
+      "sha256": "6717a685c70bba13ff77507e74dbb8ad7a07137244d82b3417c049934beb91e1"
+    },
+    "IGRINS/export_line_shape_precision_arrays.py": {
+      "bytes": 2958,
+      "sha256": "83d9d4cbb9bc2ef64ba94be09108b80814290aaa119b8d05b6838cbf3df7f5f5"
+    },
+    "IGRINS/run_order7.py": {
+      "bytes": 4433,
+      "sha256": "5eae1a2b80d729a4153de852896579659f92153c64fa95b38a32ad411c6d34d1"
+    },
+    "IGRINS/transformerpayne_labels.py": {
+      "bytes": 5348,
+      "sha256": "ad599890c8242822d8aa449b349f9090bd07c25749c66b633ba30249e92f10ed"
+    },
+    "IGRINS/select_telluric_pixels.py": {
+      "bytes": 7512,
+      "sha256": "a391c430a41b7d3a8dc1e716ea29402096f44c0991d7e83dfeb5ae66cacce07e"
+    },
+    "IGRINS/audit_protected_wavenumber_mask.py": {
+      "bytes": 7679,
+      "sha256": "ddc9d8ccea6603a8bb54a0f4e8ae8bceb3231fedb7fa0d7b5241cf9c1046811a"
+    },
+    "IGRINS/check_hydrostatic_columns.py": {
+      "bytes": 6742,
+      "sha256": "3908ef3cbf33ead574f8da5482c894f2b7706f7f72e36db58e2fc8e7a78fe6a3"
+    },
+    "IGRINS/profile_opacity.py": {
+      "bytes": 8936,
+      "sha256": "4ddab8489587521f52ef5f19a54c403b801b919263e5f1d2bbdbaf94f7a19b15"
+    },
+    "IGRINS/plot_premask_report.py": {
+      "bytes": 14731,
+      "sha256": "e6cf445cadea4bc43a889965eaab02f619555eaa66bc187eb8c38afdd2c9ee0b"
+    },
+    "IGRINS/feature4820_temporal.py": {
+      "bytes": 6080,
+      "sha256": "95224dbd0671a5d6fe81acf72680d5b96aff6e5a6b5e12ba5c23b803f4ae2d08"
+    },
+    "IGRINS/audit_wavenumber_mask_signal.py": {
+      "bytes": 7915,
+      "sha256": "159ce25a8564f90f6085e4d6836d9acb291bea712576f5a99c8e29caf7029c21"
+    },
+    "IGRINS/diagnose_residuals.py": {
+      "bytes": 20347,
+      "sha256": "94e147e93ef8f48f49aff9a00e4959a7e081021fffcfaa6836efa39acf7cdc63"
+    },
+    "IGRINS/prepare_advanced_tau.py": {
+      "bytes": 7836,
+      "sha256": "b6bc02151637e08aa84a15926ac4521ae68db75188d156f7d28584fc33d21f18"
+    },
+    "IGRINS/summarize_smoothing.py": {
+      "bytes": 12097,
+      "sha256": "0a844367588c58cda18db5d365976d84ede153a1c9219a2654e7638e39b6a66f"
+    },
+    "IGRINS/fit_background_wavelength.py": {
+      "bytes": 14462,
+      "sha256": "37e5039999f0b4cda345da62c25508168399a15401bad43b48781091c77133ba"
+    },
+    "IGRINS/audit_pressure_sensitivity.py": {
+      "bytes": 7783,
+      "sha256": "b82969b7f8ed2345a7c2d96ecaaf34fb9108ec9223510e59f143a8c004d5c781"
+    },
+    "IGRINS/fit_unknown_strength.py": {
+      "bytes": 14920,
+      "sha256": "454e1d4149ab1cf2dbcbb6f03cff6dff42c0f6c9c3feb3d8164bc5b7cf79e376"
+    },
+    "IGRINS/check_line_shape_planet.py": {
+      "bytes": 14777,
+      "sha256": "cd02a24c50628a75400decb774e6190b38d92129e5048caaa9a82ec5bdc48ebd"
+    },
+    "IGRINS/prepare_stellar.py": {
+      "bytes": 4657,
+      "sha256": "ff0b456831d73d9183b51bc33540fac3e9b9304f9108fa9126ce3a1e2f9d8a9d"
+    },
+    "IGRINS/summarize_telluric_focus.py": {
+      "bytes": 15458,
+      "sha256": "4badf5718f9536e1767d8c07c6150aa033ed87a3170a82daa71f26cb574defaf"
+    },
+    "IGRINS/check_wavenumber_protected_mask_stress.py": {
+      "bytes": 11929,
+      "sha256": "c3841dcbed3db914906b23475f241e017a360b617438a69251c29d05ff428dbe"
+    },
+    "IGRINS/audit_vertical_profile.py": {
+      "bytes": 6294,
+      "sha256": "48fc70ddc92d0bfe9abfa0b6ed82e17f05ecece0f7d030d0ceee61b95ea46540"
+    },
+    "IGRINS/check_joint_outputs.py": {
+      "bytes": 6551,
+      "sha256": "faf2118304ea65d7e98a2cd46eae2bbf2a053ef4c0340c584a2cbe6017a3bc29"
+    },
+    "IGRINS/check_joint.py": {
+      "bytes": 3994,
+      "sha256": "9e5a281923bac95cd0aeda0d134917543ba2928965be2aa4b471f5ea383cc7af"
+    },
+    "IGRINS/smooth_residuals.py": {
+      "bytes": 10687,
+      "sha256": "a8337bf12b92ecc4fb1ff39880f9f7800622f551d21e8f614c7f0557c1e3b7a6"
+    },
+    "IGRINS/quadratic_ip_response.py": {
+      "bytes": 8664,
+      "sha256": "8fd75b3a71426c682612193d8a5518f87a4be114f908e4b07482c64baae1f0fb"
+    },
+    "IGRINS/adopt_blase_model.py": {
+      "bytes": 9995,
+      "sha256": "259dec51ea98d7547407716c60892cae6e172f54437afe2f1ee26a75fecc447d"
+    },
+    "IGRINS/check_quadratic_strength_planet.py": {
+      "bytes": 12564,
+      "sha256": "4c80dfe65997f080bf9fc851b0b603aa34bb3d684b9566dcea24f980cc258695"
+    },
+    "IGRINS/refine_telluric_mask.py": {
+      "bytes": 3422,
+      "sha256": "3e73f44cc3ee9daaa05e28825993f2e67edf685ec34ed52483b4749d78a26448"
+    },
+    "IGRINS/audit_line_shape_precision.py": {
+      "bytes": 9504,
+      "sha256": "8ce94e203a823325da5fb7320630d2525e2325a59b92e7265044c5d1f8f7c1b5"
+    },
+    "IGRINS/audit_quadratic_strength.py": {
+      "bytes": 24733,
+      "sha256": "5a2138c7dd3e4aba5b7b6383ccf9d5ac7e168e79d87a8ca8c84ef73a78db986d"
+    },
+    "IGRINS/check_order7_precision.py": {
+      "bytes": 4486,
+      "sha256": "d3baff1ae1e869d754039c4e195c6bd9351829bfeb7cbcef1c64badd1ad3f209"
+    },
+    "IGRINS/check_n2_cia.py": {
+      "bytes": 5028,
+      "sha256": "3b2111dbae219adad887d313690e78e1c69eeaec366960a68673731f4a5349d5"
+    },
+    "IGRINS/compare_advanced_opacity.py": {
+      "bytes": 6655,
+      "sha256": "8d46b0968181654824b0a5a50ece618a9c4fb1dcc511b45138ee0f62351b485c"
+    },
+    "IGRINS/check_relaxed_strength_planet.py": {
+      "bytes": 10324,
+      "sha256": "7623845a3d24ed37c0648dc1302b6faf30a686e7b551f9040ea5e589a8f258eb"
+    },
+    "IGRINS/fit_telluric.py": {
+      "bytes": 12787,
+      "sha256": "d86311e5f8fa921294df85cc69fee1af21b0da2b8d371abe14ff3b9908c51be4"
+    },
+    "IGRINS/fit_joint.py": {
+      "bytes": 38276,
+      "sha256": "c120c3d16b30f017811bccfa130f5f680914c9b2cae2a3b0ea2f57af796166c2"
+    },
+    "IGRINS/diagnose_crossnight.py": {
+      "bytes": 15562,
+      "sha256": "d9f95c705cf8112b1d8440b0efb9939cf426968c4871b99b6b49dad02fac216a"
+    },
+    "IGRINS/stellar_template.py": {
+      "bytes": 917,
+      "sha256": "6d1f591b70e4d7e4bf2cf26eae1960ff5eda04316d5b9baccd562d8f95938338"
+    },
+    "IGRINS/prepare_order7_scope.py": {
+      "bytes": 3893,
+      "sha256": "8dcb438c46e22369d257ac648b9e04f5fb42fd84d74f1e9e0786f0e7a74ba017"
+    },
+    "IGRINS/audit_line_shape_saved.py": {
+      "bytes": 11405,
+      "sha256": "c73737476e2c0c5d2b6a34725f52d4a79e3b070696cc01a092564f7ec41b4a6a"
+    },
+    "IGRINS/check_order7.py": {
+      "bytes": 13612,
+      "sha256": "6caea08cfae4d98c6dfadd14d51f38098af5a685412e4b4721009e26a90eb465"
+    },
+    "IGRINS/fit_transformerpayne_elements.py": {
+      "bytes": 20618,
+      "sha256": "faee03901c031bb2323d4f921c63cfeb6e47c3c7763a06dd7a4ee8d7cdf24908"
+    },
+    "IGRINS/prepare_transformerpayne.py": {
+      "bytes": 8205,
+      "sha256": "161ceda4b13b5c772078efc9171a603ca8cb6c7153e762161a91a278869b80f5"
+    },
+    "IGRINS/overlay_enuma.py": {
+      "bytes": 18469,
+      "sha256": "f23a22fc9fc075c963bca92a25ac139ce1870a902ef49378e50fbefda1aa60e1"
+    },
+    "IGRINS/atmosphere_profile.py": {
+      "bytes": 2820,
+      "sha256": "0f539ec43a5b91c9ffc3d6302e84902c4cfaf99f3de55fbe0ed9f2c9d09d210b"
+    },
+    "IGRINS/fit_transformerpayne_stellar_control.py": {
+      "bytes": 9066,
+      "sha256": "b5f5f1cab5edc0bf09afbe7d2f1cfd20c567f42deedf29b895f19c275a0602fd"
+    },
+    "IGRINS/diagnose_4820.py": {
+      "bytes": 7450,
+      "sha256": "0caccadb682a2753109b87a26009a7a5d4723dd20b6dcc85a566fab1796ee078"
+    },
+    "IGRINS/audit_wavenumber_mask_stress.py": {
+      "bytes": 6907,
+      "sha256": "44bdca1f2b9d33c51e05b403199f0bb54014420cd2dd79f619066e70ad96fdb6"
+    },
+    "IGRINS/check_telluric_focus.py": {
+      "bytes": 7498,
+      "sha256": "7f0ac1bfda7a7ae2643813f4a4be540960960bb15d0a323729ea6d8ddc88b6ff"
+    },
+    "IGRINS/design_wavenumber_masks.py": {
+      "bytes": 18356,
+      "sha256": "9100a9ef8a647c2aced36ec3d2fef1a5982e1ae881fb3f0d7850ec7d07371458"
+    },
+    "IGRINS/audit_wavenumber_masks.py": {
+      "bytes": 12243,
+      "sha256": "5a512c056d716ffc8dc1828db03d283a7a0ff4436745524010e3014cab8d3777"
+    },
+    "IGRINS/diagnose_order7_species.py": {
+      "bytes": 5239,
+      "sha256": "cfc18f1b91be88f4fe34966145e5fae61da8b0ee510de580af5f9fe83ebd0437"
+    },
+    "IGRINS/check_strength_planet.py": {
+      "bytes": 11253,
+      "sha256": "a56c3d34f7e4ae98ada4f33c625a1802b1b82780caac7bf622073f120742257c"
+    },
+    "IGRINS/fit_crossnight_feature.py": {
+      "bytes": 14606,
+      "sha256": "0d6641799307cda51dde015f08a72d4ba800bba75e3243de2f0fddecdcc0adfc"
+    },
+    "IGRINS/audit_relaxed_strength.py": {
+      "bytes": 14734,
+      "sha256": "f2336d704d1cc875d5179f96156ae9d58286d53e631c5b7d6f44ef4575b5e03b"
+    },
+    "IGRINS/check_wavenumber_mask_signal.py": {
+      "bytes": 18521,
+      "sha256": "4d25754d3ce9388ebf8049aeba24aecc207b4770bf9e5b31cc7adcf70d354942"
+    },
+    "IGRINS/design_protected_wavenumber_mask.py": {
+      "bytes": 15181,
+      "sha256": "c0fc696fa2e3b63239acec3a39a6f1c470035eeda26f00626ce4d039029b4ae5"
+    },
+    "IGRINS/report_transformerpayne_stellar_control.py": {
+      "bytes": 9221,
+      "sha256": "5c0127be5574fc102f415798812298c798a222f219d13697800c3e54e056accd"
+    },
+    "IGRINS/check_background_wavelength_planet.py": {
+      "bytes": 10733,
+      "sha256": "13d51513cf7aeca1bb202157ff9ae8e5dd5ff92ab98659df370079a23aee5629"
+    },
+    "IGRINS/analyze_poly5_spectral.py": {
+      "bytes": 19091,
+      "sha256": "1260d6b2fd9abe00b6556de143fe670087e256f76cb6f0b15cafe24e7d657d8b"
+    },
+    "IGRINS/plot_restored_igrins_report.py": {
+      "bytes": 12283,
+      "sha256": "f3d55e28706245f366e469fe5ca4a5119f6a11cc9ebed3dc01108a346975ff4b"
+    },
+    "IGRINS/report_order7.py": {
+      "bytes": 36656,
+      "sha256": "1f293b58dabcf08d276e04d3290a10d30453cbeb6e4df5d6b532bdf487616f09"
+    },
+    "IGRINS/diagnose_spectral_budget.py": {
+      "bytes": 22366,
+      "sha256": "7d483e4998b7c6d7eeeddf2bdebadeb3a5e91342df46a46451890ba813658252"
+    },
+    "IGRINS/report_blase_stellar.py": {
+      "bytes": 28802,
+      "sha256": "babcba68312a3cc24ce9d08199406b88d86d492a4e17723708f6973100d7a0ea"
+    },
+    "IGRINS/prepare_data.py": {
+      "bytes": 2821,
+      "sha256": "53097b24016a90cd1cfce2624caacbf437ccb11957bac43cb638575881f8dd6b"
+    },
+    "IGRINS/audit_hot_water_mask_stress.py": {
+      "bytes": 7886,
+      "sha256": "88c5640866c24180184bfb865d18e669a34644b7875c3d10af5f024f89fb68a0"
+    },
+    "IGRINS/export_wavenumber_mask_trials.py": {
+      "bytes": 6940,
+      "sha256": "67102537f459982b447a1609997d738aa2571632c4cee508f048bb58f776d30f"
+    },
+    "IGRINS/diagnose_order7_4383_profile.py": {
+      "bytes": 10506,
+      "sha256": "38db594a93475b27bc374ae252289acee061b5156c2a6342d4ab1a4eb6ded234"
+    },
+    "IGRINS/fit_wavenumber_masks.py": {
+      "bytes": 8229,
+      "sha256": "6c33ed6358fe29ee05bbfc869bf65b01c469adbb8f52a6d389fb8eb9a6f80157"
+    },
+    "IGRINS/diagnose_transfer.py": {
+      "bytes": 15088,
+      "sha256": "f91b6fc5a22f2aa1b6cc7bead7409802512e546105f27782b953048681dfcb9f"
+    },
+    "IGRINS/plot_current_blase_report.py": {
+      "bytes": 8061,
+      "sha256": "fd07937e0228b390d3487e225eba5a19aca562b2eefc6b963e8cea17c0e012a0"
+    },
+    "IGRINS/restore_comparison_tables.py": {
+      "bytes": 27263,
+      "sha256": "5ad41eadf72f0562eb9e21413de4f4327904f64509609103d7889a8402e37c24"
+    },
+    "IGRINS/audit_smooth_residuals.py": {
+      "bytes": 11971,
+      "sha256": "514e26e1b600f94b8ea97694b0e251ce36e857b28c1b49c599583acf88b2e3db"
+    },
+    "IGRINS/diagnose_line_parameters.py": {
+      "bytes": 17435,
+      "sha256": "d44c639f47c61c07112e77811a554613395a00552f2e45338a1813d3f1c41f4e"
+    },
+    "IGRINS/check_smooth_signal.py": {
+      "bytes": 13442,
+      "sha256": "009c03aca75e2b77ecb6775a0e77fe149fb970e7cdb9219f04ca7cde78ef9f6a"
+    },
+    "IGRINS/profile_background_wavelength_strength.py": {
+      "bytes": 9068,
+      "sha256": "794c3cf36e121f82623e7423d7cda4679a504939bbcffa463ef4a8b45941b6a7"
+    },
+    "IGRINS/diagnose_quadratic_strength.py": {
+      "bytes": 16908,
+      "sha256": "13fbbde14e1d602c935eb31d87d36892c81a03d6b87ba0a11a7cbb414221e697"
+    },
+    "IGRINS/check_opacity_completeness.py": {
+      "bytes": 12979,
+      "sha256": "73dbe59f984b97959c3d2741e327ef39e391c6920e7a924a5bf3ef2792a860b3"
+    },
+    "IGRINS/fit_line_strength.py": {
+      "bytes": 21481,
+      "sha256": "41f4a66d53cb26044859bc23f9175d067379cd2234a92ee31e4e7d5e119e2982"
+    },
+    "IGRINS/diagnose_order7_4383_telluric.py": {
+      "bytes": 11479,
+      "sha256": "ab36ad0b886cb4e89c7a2b687b7c816df67a6a515405f740cfc2dd960b957283"
+    },
+    "IGRINS/diagnose_wavenumber_mask_interval_signal.py": {
+      "bytes": 7825,
+      "sha256": "57c5c96ff967afeaad0d68166c035d45666547d85dbfa7fb5781fa2283d16a1b"
+    },
+    "IGRINS/analyze_poly5_temporal.py": {
+      "bytes": 11903,
+      "sha256": "035a2224b696816dd1ecb5b9018517e5be3e898612abe737f6e084b4fef682db"
+    },
+    "IGRINS/plot_profile_trials.py": {
+      "bytes": 4586,
+      "sha256": "d3ebae43c3598660c81bd9ab300709e43a63c4a8ae5bca459221184f58ac67aa"
+    },
+    "IGRINS/compare_transformerpayne.py": {
+      "bytes": 15693,
+      "sha256": "5307746d7ff530cc4181aa8601c3ce9dcdeafc4f3e23b4464ce9214b4514dcdd"
+    },
+    "IGRINS/validate_line_shape_solution.py": {
+      "bytes": 4396,
+      "sha256": "a5a0261daa3e4942eb46720067df9e9c3931b7ac3f435c8d07777f628121866a"
+    },
+    "IGRINS/experiment_vertical_profile.py": {
+      "bytes": 15613,
+      "sha256": "8b4ffe24126571834ef9d127964ca31421391325bc2ec24b1c87bdd9422edc1f"
+    },
+    "IGRINS/fit_transformerpayne_labels.py": {
+      "bytes": 23886,
+      "sha256": "97d959dc8aaa0b967b6cc35691396648006e4de6db2b20719c85dec459239941"
+    },
+    "IGRINS/blase_stellar.py": {
+      "bytes": 14860,
+      "sha256": "523346d98ab9ae0bc3b0a5482429ebc2464db0bd69ee2fb5dba879865de5ed83"
+    },
+    "IGRINS/line_strength_support.py": {
+      "bytes": 9395,
+      "sha256": "27ac8b7a921b965368b2f600b2ebe3dd67cbcb6902db1a4e8bb9153432153f08"
+    },
+    "config/order7_initial.json": {
+      "bytes": 1528,
+      "sha256": "46ca0ea134a91feb0edcbeba116705bed7d79c571b7caf3a572e3ba8045c39ee"
+    },
+    "patches/exojax-convolution.patch": {
+      "bytes": 1000,
+      "sha256": "4e8fb20b81d4a7a9a8b3ee587507c6ad9a9c139bff1f418aa5496e0ee52aacb4"
+    },
+    "patches/EXOJAX_LICENSE": {
+      "bytes": 1081,
+      "sha256": "076ac4051a82e4e8fd1af5b140809a48dfc0a204e6ff3566c6bd527096b1a17b"
+    },
+    "tests/test_exojax_convolution.py": {
+      "bytes": 855,
+      "sha256": "80f11f0baf6b5d6897b85c4bf6f0671a007cebed1d3bdcf51190b61e613fc65b"
+    },
+    "IGRINS/vendor/blase/PROVENANCE.json": {
+      "bytes": 638,
+      "sha256": "08a802a4baaf9de40c4105077dc74a87cbba2b14427cd2dd9b6616959a465e47"
+    },
+    "IGRINS/vendor/blase/LICENSE": {
+      "bytes": 1062,
+      "sha256": "3bd0f23ca1fa1a2fadbb0fccc09105e9065f5b08ec9920e3c4c8ada16664e55d"
+    },
+    "IGRINS/vendor/blase/blase/__init__.py": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "IGRINS/vendor/blase/blase/jaxemulator.py": {
+      "bytes": 13695,
+      "sha256": "ac9438a0cdab9c3183b780016db02823c5588a809c89e7fa7ce3b088ef10898a"
+    },
+    ".gitattributes": {
+      "bytes": 124,
+      "sha256": "aa61515aec0953f5cf381c2480925f3715c92acecc0d547c73447a9fb8ebd053"
+    }
+  },
+  "reference_python": "3.12.2",
+  "reference_dependencies": {
+    "jax": "0.10.0",
+    "jaxlib": "0.10.0",
+    "numpy": "2.1.0",
+    "scipy": "1.17.1",
+    "pandas": "2.2.3",
+    "matplotlib": "3.10.1",
+    "astropy": "7.0.1",
+    "xarray": "2025.1.2",
+    "hitran-api": "1.2.2.3",
+    "requests": "2.32.3",
+    "tqdm": "4.67.1",
+    "pytest": "8.3.3"
+  },
+  "exojax_patch": "patches/exojax-convolution.patch",
+  "excluded": [
+    "observational spectra and metadata",
+    "line-list and stellar/atmosphere caches",
+    "fitted arrays and generated results",
+    "enuma input and all derived comparison data or figures",
+    "virtual environments and ExoJAX checkout"
+  ],
+  "verification": {
+    "convolution_regressions": "8 passed",
+    "all_export_scripts_parse": true,
+    "active_import_smoke_test_without_inputs": true,
+    "convolution_patch_applies_to_pinned_source": true,
+    "real_data_scope_and_missing_history_report_activation": "Checked in temporary isolated directories; no input products exported",
+    "full_fit_rerun": false,
+    "reference_products_unchanged": true
+  },
+  "formatting_note": "Trailing whitespace removed from audit_background_wavelength.py; vendor and patch bytes preserved."
+}

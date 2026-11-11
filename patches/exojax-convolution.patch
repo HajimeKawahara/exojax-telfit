@@ -1,0 +1,24 @@
+diff --git a/src/exojax/signal/convolve.py b/src/exojax/signal/convolve.py
+index cca5ba55..7f4c9235 100644
+--- a/src/exojax/signal/convolve.py
++++ b/src/exojax/signal/convolve.py
+@@ -12,14 +12,15 @@ def convolve_same(input_signal, kernel):
+         kernel (1D array): convolution kernel
+ 
+     Returns:
+-        1D array: convolved signal
++        1D array: centered convolution with the same length as input_signal
+     """
+     input_length = len(input_signal)
+     filter_length = len(kernel)
+     fft_length = input_length + filter_length - 1
+     convolved_signal = jnp.fft.irfft(
+-        jnp.fft.rfft(input_signal, n=fft_length) * jnp.fft.rfft(kernel, n=fft_length)
++        jnp.fft.rfft(input_signal, n=fft_length) * jnp.fft.rfft(kernel, n=fft_length),
++        n=fft_length,
+     )
+-    n = int((filter_length - 1) / 2)
+-    convolved_signal = convolved_signal[n:-n]
++    n = (filter_length - 1) // 2
++    convolved_signal = convolved_signal[n:n + input_length]
+     return convolved_signal

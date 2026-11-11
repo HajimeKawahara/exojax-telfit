@@ -218,3 +218,27 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local scientific inputs and generated products (never distribute).
+/IGRINS/data/
+/IGRINS/cache/
+/IGRINS/results/
+/IGRINS/CURRENT_MODEL.txt
+**/series_model.npz
+**/*enuma*.npz
+**/*enuma*.png
+**/*enuma*.pdf
+/IGRINS/.venv*/
+/_deps/
+/.venv*/
+*.npz
+*.npy
+*.pic
+*.par
+*.fits
+*.h5
+*.hdf5
+*.nc
+*.pkl
+*.pickle
+*.log

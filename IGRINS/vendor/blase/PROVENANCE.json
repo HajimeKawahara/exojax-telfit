@@ -1,0 +1,10 @@
+{
+  "repository": "https://github.com/gully/blase",
+  "commit": "6f6817b0c4095c104a10b2940375fc1e16cb80ca",
+  "source_url": "https://github.com/gully/blase/blob/6f6817b0c4095c104a10b2940375fc1e16cb80ca/src/blase/jaxemulator.py",
+  "source_sha256": "ac9438a0cdab9c3183b780016db02823c5588a809c89e7fa7ce3b088ef10898a",
+  "license": "MIT",
+  "license_sha256": "3bd0f23ca1fa1a2fadbb0fccc09105e9065f5b08ec9920e3c4c8ada16664e55d",
+  "installation": "Unmodified upstream JAX module imported directly; no PyTorch installed",
+  "adapter_change": "Consecutive sparse integer indices replace upstream endpoint-inclusive linspace; vendor unchanged"
+}
