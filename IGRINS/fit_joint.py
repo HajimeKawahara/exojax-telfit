@@ -32,14 +32,13 @@ import matplotlib.pyplot as plt
 
 from exojax.database.core.broadening import doppler_sigma, gamma_hitran, gamma_natural
 from exojax.database.core.line_strength import line_strength
-from exojax.opacity import OpaDirect
 from exojax.opacity.lpf.lpf import xsvector
 from exojax.postproc.response import ipgauss, ipgauss_variable_sampling, sampling
 from exojax.postproc.spin_rotation import convolve_rigid_rotation
 from exojax.utils.constants import Patm, c, m_u
 
 from atmosphere_profile import load_profile
-from hitran_cache import load_mdb
+from hitran_cache import load_mdb, make_opacity
 from stellar_template import load_stellar
 
 ROOT = Path(__file__).resolve().parent
@@ -47,6 +46,8 @@ ROOT = Path(__file__).resolve().parent
 
 def cross_section(opa, temperature, pressure, self_pressure, shifted):
     """Existing ExoJAX opacity, optionally with the HITRAN air line shift."""
+    if not len(opa.mdb.nu_lines):
+        return jnp.zeros_like(opa.nu_grid)
     if not shifted:
         return opa.xsvector(temperature, pressure, self_pressure)
     db = opa.mdb
@@ -69,6 +70,8 @@ def profile_tau(opa, grid, profile, species, shifted=False, self_broadening=Fals
         raise ValueError("Invalid columns or temperatures outside cached partition sums.")
     # Self widths are fixed at the reference profile; fitted scale changes column only.
     self_pressure = pressure * vmr if self_broadening else np.zeros_like(pressure)
+    if not len(opa.mdb.nu_lines):
+        return np.zeros(len(grid)), float(np.sum(column))
     digest = hashlib.sha256()
     for value in (grid, pressure, temperature, column, self_pressure,
                   opa.mdb.nu_lines, opa.mdb.logsij0, opa.mdb.gamma_air,
@@ -95,6 +98,7 @@ def metrics(residual, mask):
 
 
 def main():
+    fit_code_sha256 = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--orders", type=int, nargs="+", default=[13, 34, 40])
     parser.add_argument("--train", type=int, nargs="+", default=[0, 78])
@@ -125,6 +129,10 @@ def main():
     parser.add_argument("--line-cutoff", type=float, default=1e-28)
     parser.add_argument("--line-margin", type=float, default=3.)
     parser.add_argument("--continuum-degree", type=int, default=3)
+    parser.add_argument("--continuum-scope", choices=["calibration", "all"], default="calibration",
+                        help="Pixels used to profile the heldout continuum; physical nuisance parameters still use calibration blocks")
+    parser.add_argument("--positive-continuum", action="store_true",
+                        help="Fit polynomial shape and profile its constant with positivity on the observed grid")
     parser.add_argument("--quadratic-wavelength", action="store_true")
     parser.add_argument("--direct-ip", action="store_true",
                         help="Evaluate Gaussian response directly at observed wavelengths")
@@ -146,6 +154,8 @@ def main():
     parser.add_argument("--check-layers", action="store_true",
                         help="Compare fixed-parameter 10/20/40 layer predictions")
     args = parser.parse_args()
+    (ROOT / "results").mkdir(parents=True, exist_ok=True)
+    (ROOT / "cache").mkdir(parents=True, exist_ok=True)
     dynamic_profile = bool(args.temperature_nodes or args.water_shape != "fixed")
     args.direct_ip |= args.ip_wavelength
     if dynamic_profile and args.atmosphere != "profile":
@@ -236,9 +246,7 @@ def main():
         opacities, tau, columns, tables = [], [], [], []
         for species in args.species:
             db = load_mdb(species, grid[0]-args.line_margin, grid[-1]+args.line_margin, crit=args.line_cutoff)
-            if not len(db.nu_lines):
-                raise ValueError(f"No {species} lines; adjust --species for this order.")
-            opa = OpaDirect(db, grid)
+            opa = make_opacity(db, grid)
             print(f"Order {order}: {species}, {len(db.nu_lines)} lines", flush=True)
             if args.atmosphere == "profile":
                 optical_depth, column = profile_tau(opa, grid, profile, species, args.shift, args.self_broadening)
@@ -295,6 +303,13 @@ def main():
                             add(f"stretch_o{order}_kms", 0., -3., 3.)))
         quadratic.append(add(f"quadratic_o{order}_kms", 0., -2., 2.) if args.quadratic_wavelength else None)
         ip_slope.append(add(f"ip_log_slope_o{order}", 0., -.3, .3) if args.ip_wavelength else None)
+    continuum_shapes = []
+    if args.positive_continuum:
+        for block in blocks:
+            continuum_shapes.append([
+                [add(f"continuum_o{block['order']}_e{exposure}_cheb{k}", 0., -np.inf, np.inf)
+                 for k in range(1, n_continuum)] for exposure in exposures])
+    previous = {}
     if args.initial:
         previous_fit = json.loads(args.initial.read_text())
         previous = previous_fit["parameters"]
@@ -325,7 +340,9 @@ def main():
         weights = redistribution_weights(column, shape) if dynamic_profile else jnp.ones(args.layers)
         return delta, weights
 
-    def evaluate(p, tau_override=None):
+    def evaluate(p, tau_override=None, positive_continuum=None):
+        if positive_continuum is None:
+            positive_continuum = args.positive_continuum
         predictions, continua, components = [], [], []
         if dynamic_profile:
             temperature_delta, water_weights = profile_state(p)
@@ -372,15 +389,30 @@ def main():
                         wing = ipgauss(intrinsic, block["velocity"], 2*width)
                         sampled = ((1-fraction)*sampled + fraction*sampling(
                             target_nu, block["grid"], wing, rv+offset+(1-fraction)*separation))
-                design = basis * sampled[:, None]
-                weight = jnp.asarray(masks[b,e], dtype=jnp.float64)
-                normal = design.T @ (weight[:, None] * design)
-                coefficients = jnp.linalg.solve(normal + 1e-12*jnp.eye(n_continuum), design.T @ (weight * block["y"][e]))
-                continuum = basis @ coefficients
+                weight = jnp.asarray(allowed[b] if args.continuum_scope == "all" else masks[b,e],
+                                     dtype=jnp.float64)
+                if positive_continuum:
+                    shape = basis[:, 1:] @ p[jnp.asarray(continuum_shapes[b][e], dtype=int)]
+                    constant = jnp.sum(weight * sampled * (block["y"][e] - sampled * shape)) / jnp.sum(weight * sampled**2)
+                    constant = jnp.maximum(constant, 1e-8 - jnp.min(shape))
+                    continuum = constant + shape
+                else:
+                    design = basis * sampled[:, None]
+                    normal = design.T @ (weight[:, None] * design)
+                    coefficients = jnp.linalg.solve(normal + 1e-12*jnp.eye(n_continuum), design.T @ (weight * block["y"][e]))
+                    continuum = basis @ coefficients
                 rows.append(sampled * continuum); cs.append(continuum); parts.append(sampled)
             predictions.append(jnp.stack(rows)); continua.append(jnp.stack(cs)); components.append(jnp.stack(parts))
         return jnp.stack(predictions), jnp.stack(continua), jnp.stack(components)
 
+    if args.positive_continuum:
+        unconstrained = np.asarray(evaluate(jnp.asarray(initial), positive_continuum=False)[1])
+        for b, order_shapes in enumerate(continuum_shapes):
+            for e, indices in enumerate(order_shapes):
+                coefficients = np.linalg.lstsq(np.asarray(basis), unconstrained[b, e], rcond=None)[0]
+                for i, value in zip(indices, coefficients[1:]):
+                    if names[i] not in previous:
+                        initial[i] = value
     observed = jnp.stack([block["y"] for block in blocks])
     training = masks.copy(); training[:, -1] = False
     calibration = np.zeros(observed.shape, dtype=bool); calibration[:, -1] = allowed & calibration_mask
@@ -391,7 +423,14 @@ def main():
     heldout_indices = [water[-1], epoch_rv[-1]]
     if args.ip_epoch:
         heldout_indices.append(epoch_ip[-1])
+    if args.positive_continuum:
+        heldout_indices.extend(i for shapes in continuum_shapes for i in shapes[-1])
     fixed_indices = [star_rv, star_sigma] if args.fix_star else []
+    zero_opacity_species = [species for j, species in enumerate(args.species)
+                            if all(len(block["opacities"][j].mdb.nu_lines) == 0
+                                   for block in blocks)]
+    fixed_indices += [abundance[species] for species in zero_opacity_species
+                      if species in abundance]
     train_indices = np.array([i for i in range(len(names)) if i not in heldout_indices + fixed_indices])
     if args.freeze_shared:
         if not args.initial or not previous_fit["training_fit"]["success"]:
@@ -466,9 +505,27 @@ def main():
     best, holdout_fit = optimize(best, heldout_indices, validation_residual, "heldout calibration")
     predicted, continuum, component = map(np.asarray, evaluate(jnp.asarray(best)))
     if not np.all(np.isfinite(predicted)) or np.any(continuum <= 0):
+        failure_tag = args.tag or f"joint_{'nostar' if args.no_star else 'star'}_{args.atmosphere}"
+        failure = dict(status="failed", reason="Nonfinite model or nonpositive fitted continuum",
+                       orders=args.orders, exposures=exposures,
+                       parameters=dict(zip(names, best.tolist())),
+                       training_fit=training_fit, heldout_calibration_fit=holdout_fit,
+                       nonfinite_model_count=int(np.sum(~np.isfinite(predicted))),
+                       nonpositive_continuum_count=int(np.sum(continuum <= 0)),
+                       minimum_continuum=float(np.nanmin(continuum)),
+                       positive_continuum=args.positive_continuum,
+                       continuum_scope=args.continuum_scope,
+                       fit_code_sha256=fit_code_sha256)
+        (ROOT / "results" / f"{failure_tag}_failure.json").write_text(json.dumps(failure, indent=2)+"\n")
+        np.savez_compressed(ROOT / "results" / f"{failure_tag}_failure.npz",
+                            observed=np.asarray(observed), model=predicted, continuum=continuum,
+                            component=component, orders=args.orders, exposures=exposures,
+                            wavelength_um=np.stack([block["wave"] for block in blocks]))
         raise ValueError("Nonfinite model or nonpositive fitted continuum.")
     normalized = (np.asarray(observed)-predicted)/continuum
     near_bound = (best-lower < .001*(upper-lower)) | (upper-best < .001*(upper-lower))
+    if args.positive_continuum:
+        near_bound &= np.isfinite(lower) & np.isfinite(upper)
     result = dict(atmosphere=args.atmosphere, stellar_template=not args.no_star,
                   orders=args.orders, train_exposures=args.train, heldout_exposure=args.holdout,
                   pixels=args.pixels, layers=args.layers, dv_kms=args.dv, pressure_shift=args.shift,
@@ -479,7 +536,18 @@ def main():
                   temperature_node_pressures_bar=args.temperature_nodes, water_shape=args.water_shape,
                   pressure_scale=args.pressure_scale, line_cutoff=args.line_cutoff,
                   line_margin_cm1=args.line_margin, species=args.species,
-                  continuum_degree=args.continuum_degree, quadratic_wavelength=args.quadratic_wavelength,
+                  zero_opacity_species=zero_opacity_species,
+                  opacity_line_counts={str(block["order"]): {
+                      species: len(opa.mdb.nu_lines)
+                      for species, opa in zip(args.species, block["opacities"])}
+                      for block in blocks},
+                  continuum_degree=args.continuum_degree,
+                  continuum_scope=args.continuum_scope,
+                  positive_continuum=args.positive_continuum,
+                  continuum_positive_floor=1e-8 if args.positive_continuum else None,
+                  continuum_floor_active_count=int(np.sum(continuum <= 1.01e-8)) if args.positive_continuum else 0,
+                  minimum_continuum=float(np.min(continuum)),
+                  quadratic_wavelength=args.quadratic_wavelength,
                   direct_ip=args.direct_ip, ip_wavelength=args.ip_wavelength,
                   ip_epoch=args.ip_epoch, ip_asymmetry=args.ip_asymmetry,
                   nonlinear_loss=args.loss, nonlinear_loss_scale=args.loss_scale,
@@ -499,9 +567,12 @@ def main():
                                "Reanalysis profile with optional smooth shared temperature/water-shape corrections; dry species shared, water per exposure",
                                "Self widths omitted by default; optional reference self widths frozen when scaling columns",
                                "No planetary model; no residual clipping; no pixel uncertainty array",
-                               "Held-out exposure nuisance parameters and continua calibrated on alternate 80-pixel blocks with 5-pixel guards",
+                               ("Held-out physical nuisance parameters calibrated on alternate 80-pixel blocks with 5-pixel guards; continuum uses all included pixels"
+                                if args.continuum_scope == "all" else
+                                "Held-out exposure nuisance parameters and continua calibrated on alternate 80-pixel blocks with 5-pixel guards"),
                                "Validation is conditional prediction, not an entirely unseen exposure",
-                               "Polynomial continuum eliminated separately for each order/exposure",
+                               ("Polynomial continuum shape fitted separately for each order/exposure; constant profiled with positivity on the observed grid"
+                                if args.positive_continuum else "Polynomial continuum eliminated separately for each order/exposure"),
                                "Profile redistribution preserves molecular column on fixed pressure layers; background mean mass fixed"])
     per_spectrum = []
     for b, block in enumerate(blocks):
@@ -559,7 +630,7 @@ def main():
     tag = args.tag or f"joint_{'nostar' if args.no_star else 'star'}_{args.atmosphere}"
     out = ROOT / "results"
     result["provenance"] = dict(
-        fit_code_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        fit_code_sha256=fit_code_sha256,
         initial_path=str(args.initial) if args.initial else None,
         initial_sha256=hashlib.sha256(args.initial.read_bytes()).hexdigest() if args.initial else None,
         command_arguments={key: str(value) if isinstance(value, Path) else value for key,value in vars(args).items()})

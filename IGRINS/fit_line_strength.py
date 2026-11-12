@@ -28,14 +28,13 @@ from scipy.optimize import least_squares
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from exojax.opacity import OpaDirect
 from exojax.postproc.response import ipgauss, sampling
 from exojax.postproc.spin_rotation import convolve_rigid_rotation
 from exojax.utils.constants import c
 
 from atmosphere_profile import load_profile
 from fit_joint import profile_tau
-from hitran_cache import load_mdb
+from hitran_cache import load_mdb, make_opacity
 from line_strength_support import native_grid, prepare_line_tau, select_lines
 from stellar_template import load_stellar
 
@@ -151,7 +150,7 @@ def build_context(source_tag="motion_clean_control", evaluation_prefix="nonstell
         taus, individual, tau_metadata = {}, [], []
         for molecule in species:
             db = load_mdb(molecule, grid[0]-meta["line_margin_cm1"], grid[-1]+meta["line_margin_cm1"], meta["line_cutoff"])
-            taus[molecule] = profile_tau(OpaDirect(db, grid), grid, profile, molecule,
+            taus[molecule] = profile_tau(make_opacity(db, grid), grid, profile, molecule,
                                         meta["pressure_shift"], meta["reference_self_broadening"])[0]
             records = [record for record in selections[b] if record["species"] == molecule]
             values, tau_meta = prepare_line_tau(molecule, records, grid, profile,
@@ -170,7 +169,8 @@ def build_context(source_tag="motion_clean_control", evaluation_prefix="nonstell
         offsets = np.array([par[f"calibration_rv_o{order}_kms"]+par.get(f"calibration_rv_e{e}_kms", 0.)
                             for par, e in zip(parameters, exposures)])
         records = selections[b]
-        line_factors = np.array([scales[record["species"]] for record in records]).T
+        line_factors = (np.array([scales[record["species"]] for record in records]).T
+                        if records else np.zeros((len(exposures), 0)))
         target = (1e4/wave[b])*(1+p[f"stretch_o{order}_kms"]*np.linspace(-1, 1, len(wave[b]))/c)
         sl = slice(len(all_records), len(all_records)+len(records))
         all_records.extend(records)
