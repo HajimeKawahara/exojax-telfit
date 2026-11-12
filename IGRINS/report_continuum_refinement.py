@@ -16,7 +16,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
-from matplotlib.ticker import SymmetricalLogLocator
+from matplotlib.ticker import FuncFormatter, SymmetricalLogLocator
 import numpy as np
 
 ROOT = Path(__file__).resolve().parent
@@ -124,6 +124,14 @@ def symlog_axis(axis, threshold):
     locator = SymmetricalLogLocator(base=10, linthresh=threshold)
     locator.set_params(numticks=7)
     axis.yaxis.set_major_locator(locator)
+    def label(value, position):
+        if value == 0:
+            return "0"
+        if abs(value) < threshold:
+            return ""
+        sign = "-" if value < 0 else ""
+        return rf"${sign}10^{{{int(round(np.log10(abs(value))))}}}$"
+    axis.yaxis.set_major_formatter(FuncFormatter(label))
 
 
 def make_figure(before, after, row, frame, edge_pixels):
