@@ -10,7 +10,7 @@ orders, followed by a separate 79-frame export for CCF analysis.
 This repository contains the implementation and earlier diagnostic experiments.
 Observations, line lists, model checkpoints, numerical results, and **enuma data
 are not included**. The original ExoJAX repository and its local IGRINS products
-are unchanged by this export. A diagnostic RMS overview is included below.
+are unchanged by this export. A continuum comparison figure is included below.
 
 ## Setup
 
@@ -87,6 +87,8 @@ python IGRINS/run_all_orders.py --jobs 8 --cpus-per-job 8 \
 python IGRINS/summarize_all_orders.py --combine --png
 python IGRINS/run_ccf_series.py --jobs 2 --cpus-per-job 8
 python IGRINS/summarize_ccf_series.py
+python IGRINS/refine_continuum.py
+python IGRINS/report_continuum_refinement.py --normalized
 ```
 
 Choose CPU allocations that fit the machine. The shared fit uses the five
@@ -112,7 +114,23 @@ keeping that continuum fixed. New frames follow the original held-out
 calibration rules and each order's adopted continuum degree/scope. The known
 nine frames reuse their saved nuisance parameters and continuum, with an exact
 conversion between physical and exported flux normalization. Their model and
-residual arrays are checked against the saved benchmark.
+residual arrays are checked against the saved benchmark in the intermediate
+`allorders_ccf_no_injection.npz` product.
+
+The final continuum revision then freezes these physical, stellar and
+line-strength parameters and fits a positive cubic B-spline continuum to each
+observed frame. Uniform intervals span the complete order, with a nominal
+maximum spacing of 128 pixels (18 coefficients per frame). The fit works
+directly in observed flux units and retains deep absorption and negative
+measured flux. It recomputes the degree-five residual subtraction after this
+continuum fit. Thus the final continua and residuals, including the original
+nine frames, differ from the intermediate benchmark.
+
+This local flexibility addresses the coherent high-wavenumber edge shape that
+the original whole-order polynomials could not follow. Short-block validation
+supports the change. Simultaneously freeing multiplicative splines and additive
+polynomials made their decomposition unstable; a global curvature penalty also
+degraded edge predictions. Neither option is adopted.
 
 The CCF product contains the **original observations with no artificial planet
 injection**, residuals before and after degree-five smooth subtraction,
@@ -126,24 +144,55 @@ percentages. Wavelength decreases along the last axis; wavenumber increases.
 Order coordinates are zero-based cube indices; only cube index 5 has the
 confirmed user label Order 7.
 
-`IGRINS/results/allorders_ccf_no_injection.npz` is the final combined array file.
+`IGRINS/results/allorders_ccf_continuum_refined.npz` is the final combined array file.
 Its generated README describes the fields and quality flags. Very faint
 continua can amplify continuum-normalized noise; use
 `residual_fixed_scale_q5_independent` to apply the smooth subtraction directly
 in units of each frame's p95 observed flux without continuum division.
-Undefined normalization and unsuccessful fits remain
-flagged in the output. A complete export is not an injection-recovery test.
+Active coefficient bounds and earlier fit flags remain recorded. A small
+positive continuum can still make normalized residuals unusable at faint edges.
+In this run, 219 order-frame fits have at least one active coefficient bound;
+69 continuum samples reach the numerical floor. In particular, the normalized
+Q5 residual in stored order 39 is unstable and should not be used for CCF.
+The fixed-scale product remains finite at every original sample.
+A complete export is not an injection-recovery test.
 Optimizer termination also differs from strict repeated-refit stabilization:
 the recorded all-order run passed the optimizer checks but did not meet that
 stricter threshold. Per-order flags are in `allorders_summary.json`.
 
-![All-order observed residual RMS](docs/figures/allorders_ccf_overview.png)
+For all 44 orders and 79 frames, fixed-scale Q5 RMS changes from **1.7181% to
+1.5216%**; the last 128 pixels change from **1.3897% to 0.6181%**. These are
+percentages of each frame's p95 flux, not percentages of fitted continuum.
+The remaining narrow spectral mismatches are not eliminated by this revision.
 
-The 44-order, 79-frame overview compares continuum-normalized Q5 residuals,
-the same projection rescaled to frame-p95 units, and Q5 applied independently
-in frame-p95 units. Each panel has its own logarithmic color scale; their colors
-are not directly comparable. White squares mark frames with undefined
-continuum normalization. No artificial planet signal was injected.
+![Continuum revision at stored cube index 8](docs/figures/allorders_continuum_o08.png)
+
+All panels above use the same observational flux scale before and after the
+change. The lower panels enlarge the rightmost 128 pixels. The local report
+contains all 44 orders and the corresponding per-order metrics.
+The separate `allorders_continuum_refined_normalized_spectral_fits.pdf`
+retains the original continuum-normalized view and explicitly shows these
+faint-edge limitations.
+
+Continuum fitting attenuates narrow signals, especially at boundaries. Apply
+the local continuum-plus-Q5 response to CCF templates already convolved and
+sampled into frame-p95 flux units:
+
+```python
+import sys
+import numpy as np
+sys.path.insert(0, "IGRINS")
+from refine_continuum import filter_ccf_template
+
+with np.load("IGRINS/results/allorders_ccf_continuum_refined.npz") as result:
+    processed_template = filter_ccf_template(template_flux, result, order=8, frame=30)
+```
+
+The response keeps the physical model and active coefficient bounds fixed.
+It has been checked against small finite-difference perturbations, but is not
+an end-to-end planet injection-recovery test. It does not restore information
+removed by the smooth fit. Original observations and the earlier continuum
+product remain available for alternative CCF analyses.
 
 `run_ccf_series.py --wait-for-fits 21600` can consume shared products as they
 become available. Allocate separate CPU sets with `taskset` when running it
@@ -163,6 +212,8 @@ Git-ignored under `IGRINS/`.
   vary; stellar centers, widths, and reference kinematics remain fixed.
 - **Telluric strengths:** nonnegative, shared corrections with HITRAN uncertainty
   categories and a prior that suppresses unnecessary changes to weak lines.
+- **Continuum:** positive cubic B-splines in the final observed-series revision;
+  the original polynomial physical fits remain the upstream calibration.
 - **Smooth residual:** a degree-five polynomial per frame on the full order.
   No time-common residual template is subtracted.
 - **Optimization:** bounded TRF least squares for physical and stellar parameters;
@@ -206,7 +257,8 @@ python -m compileall -q IGRINS
 ```
 
 The lightweight regression checks exercise the required ExoJAX convolution
-behavior and the guarded TRF SVD fallback. `check_order7.py` independently
+behavior, the guarded TRF SVD fallback, positive continua and their template
+response. `check_order7.py` independently
 verifies fitted products after a real fit. Initial-export source hashes and
 the environment are recorded in
 `docs/implementation_manifest.json`.
