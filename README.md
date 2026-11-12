@@ -171,8 +171,8 @@ All panels above use the same observational flux scale before and after the
 change. The lower panels enlarge the rightmost 128 pixels. The local report
 contains all 44 orders and the corresponding per-order metrics.
 The separate `allorders_continuum_refined_normalized_spectral_fits.pdf`
-retains the original continuum-normalized view and explicitly shows these
-faint-edge limitations.
+shows only the current fit in the original three-panel continuum-normalized
+format and explicitly shows these faint-edge limitations.
 
 Continuum fitting attenuates narrow signals, especially at boundaries. Apply
 the local continuum-plus-Q5 response to CCF templates already convolved and

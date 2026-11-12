@@ -194,66 +194,66 @@ def make_figure(before, after, row, frame, edge_pixels):
     return fig
 
 
-def make_normalized_figure(before, after, row, frame, edge_pixels):
-    """Retain the original normalized view with each denominator explicit."""
+def make_normalized_figure(after, row, frame):
+    """Show only the current fit in the original three-panel layout."""
+    from summarize_all_orders import bounds, shade
+
     order = row["cube_index"]
     nu = after["wavenumber_cm1"][order]
-    fig, axes = plt.subplots(4, 1, figsize=(14, 13),
-                             gridspec_kw=dict(height_ratios=[1.7, 1.7, 1., 1.]))
-    fig.subplots_adjust(left=.095, right=.98, top=.90, bottom=.13, hspace=.48)
+    pixel = np.arange(len(nu))
+    score = ((pixel // 80) % 2 == 1) & (pixel % 80 >= 5) & (pixel % 80 < 75)
+    strong = np.min(after["telluric_only"][order, [0, 19, 39, 59, 78]], axis=0) <= .5
+    fig, axes = plt.subplots(3, 1, figsize=(14, 9), sharex=True,
+                             gridspec_kw=dict(height_ratios=[2.4, 1.1, 1.2]))
+    fig.subplots_adjust(left=.075, right=.98, top=.86, bottom=.15, hspace=.22)
     label = f"Stored cube index {order}" + (" (user Order 7)" if order == 5 else "")
-    fig.suptitle(f"WASP-77Ab / IGRINS: {label} — continuum-normalized comparison",
-                 fontsize=14, weight="bold", y=.973)
-    m = row["metrics"]["continuum_q5"]["evaluation_frames"]["all_pixels"]
-    fig.text(.5, .94,
-             f"Frame {frame} | evaluation RMS: previous {m['before']['rms_percent']:.4g}%, "
-             f"revised {m['after']['rms_percent']:.4g}% | each divided by its own continuum",
+    fig.suptitle(f"WASP-77Ab / IGRINS: {label}", fontsize=15, weight="bold", y=.975)
+    metric = row["metrics"]["continuum_q5"]["evaluation_frames"]["all_pixels"]["after"]
+    fig.text(.5, .935,
+             f"{row['wavelength_min_um']:.8f}–{row['wavelength_max_um']:.8f} microns | "
+             f"all {len(nu)} stored pixels | matched-frame RMS {metric['rms_percent']:.4f}%",
              ha="center")
-    log_axes, ranges = [], []
-    for index, (product, name, color) in enumerate([(before, "Previous", "#377eb8"),
-                                                   (after, "Revised", "#c53932")]):
-        observed = product["observed_continuum"][order, frame]
-        prediction = product["full_model"][order, frame] + product["smooth_continuum_q5"][order, frame]
-        axes[index].plot(nu, observed, color="black", lw=.65, label=f"Data / {name.lower()} continuum")
-        axes[index].plot(nu, prediction, color=color, lw=.9, label=f"{name} model + normalized Q5")
-        axes[index].plot(nu, product["stellar_only"][order, frame], color="#238b45", ls="--", lw=.8, label="Stellar model alone")
-        axes[index].plot(nu, product["telluric_only"][order, frame], color="#d58b19", ls=":", lw=.8, label="Telluric alone")
-        axes[index].set(ylabel=f"Flux / {name.lower()} continuum", xlim=(nu[0], nu[-1]))
-        axes[index].legend(fontsize=8, ncol=2, loc="best")
-        values = np.r_[observed, prediction]
-        ranges.append((float(np.nanmin(observed)), float(np.nanmax(observed))))
-        if np.nanmax(np.abs(values)) > 5:
-            symlog_axis(axes[index], 1.)
+    values = [after["observed_continuum"][order, frame],
+              after["full_model"][order, frame] + after["smooth_continuum_q5"][order, frame],
+              after["stellar_only"][order, frame], after["telluric_only"][order, frame]]
+    for y, color, style, width, text in zip(
+            values, ["black", "#c53932", "#238b45", "#d58b19"],
+            ["-", "-", "--", ":"], [.65, 1., 1., .9],
+            [f"Observed, frame {frame}", "Current model + Q5", "Stellar model alone", "Telluric alone"]):
+        axes[0].plot(nu, y, color=color, ls=style, lw=width, label=text)
+    axes[0].set(ylabel="Flux / continuum", ylim=bounds(values))
+    axes[0].legend(fontsize=9, ncol=2, loc="lower left")
+    residual = 100 * after["residual_continuum_q5"][order, frame]
+    axes[1].plot(nu, residual, color=".65", lw=.65)
+    axes[1].scatter(nu[score], residual[score], s=5, color="#2166ac", zorder=3)
+    axes[1].set(ylabel=f"Frame {frame} residual (%)", ylim=bounds([residual]))
+    evaluation = 100 * after["residual_continuum_q5"][order, EVALUATION]
+    for exposure, y, color in zip(EVALUATION, evaluation,
+                                   ["#1b9e77", "#7570b3", "#d95f02", "#666666"]):
+        axes[2].plot(nu, y, color=color, lw=.6, alpha=.75, label=f"Frame {exposure}")
+    axes[2].plot(nu, evaluation.mean(axis=0), color="black", lw=1.1, label="Mean")
+    axes[2].set(ylabel="Evaluation residual (%)", xlabel=r"Wavenumber (cm$^{-1}$)",
+                ylim=bounds([evaluation]))
+    axes[2].legend(fontsize=8, ncol=5, loc="lower left")
+    log_axes = []
+    for index, (axis, y, threshold, trigger) in enumerate(zip(
+            axes, [np.asarray(values), residual, evaluation], [1., 5., 5.], [5., 100., 100.])):
+        if np.max(np.abs(y)) > trigger:
+            symlog_axis(axis, threshold)
             log_axes.append(index + 1)
-        residual = product["residual_continuum_q5"][order, frame] * 100
-        axes[2].plot(nu, residual, color=color, lw=.65, label=f"{name}: its own continuum")
-        axes[3].plot(nu[-edge_pixels:], residual[-edge_pixels:], color=color, lw=.8, label=name)
-    for index in [2, 3]:
-        values = np.concatenate([line.get_ydata() for line in axes[index].lines])
-        if np.nanmax(np.abs(values)) > 100:
-            symlog_axis(axes[index], 5.)
-            log_axes.append(index + 1)
-        axes[index].set(ylabel="Residual (% of own continuum)",
-                        xlabel=r"Wavenumber (cm$^{-1}$)")
-        axes[index].legend(fontsize=8, ncol=2, loc="best")
-        axes[index].axhline(0, color="black", lw=.5)
-    axes[2].set_xlim(nu[0], nu[-1])
-    axes[3].set_xlim(nu[-edge_pixels], nu[-1])
-    axes[3].set_title(f"Rightmost {edge_pixels} pixels; denominators differ between curves")
-    for axis in axes:
+        shade(axis, nu, strong)
+        axis.set_xlim(nu[0], nu[-1])
         style_axis(axis)
-    for axis in axes[:3]:
-        axis.axvspan(nu[-edge_pixels], nu[-1], color=".8", alpha=.2)
-    undefined = int(np.count_nonzero(~np.isfinite(before["observed_continuum"][order, frame])))
-    scales = (f"Symmetric-log panels: {log_axes}; linear thresholds: flux 1, residual 5%."
-              if log_axes else "All panels use linear scales.")
-    fig.text(.5, .03,
-             "Each spectrum uses its own fitted continuum and continuum-unit Q5. Compare the fixed-scale companion for identical flux units.\n"
-             f"Data ranges: previous [{ranges[0][0]:.3g}, {ranges[0][1]:.3g}], revised [{ranges[1][0]:.3g}, {ranges[1][1]:.3g}]. "
-             f"Undefined previous samples: {undefined}; no finite samples clipped.\n"
-             f"{scales} Near-floor revised samples across all frames: {row['near_floor_samples']}.\n"
-             "Physical spectra remain frozen. Very faint continua can amplify noise dramatically; no planet recovery is established.",
-             ha="center", fontsize=8)
+    for axis in axes[1:]:
+        axis.axhline(0, color="black", lw=.5)
+    flag = (f"Continuum near its numerical floor at {row['near_floor_samples']} samples across all frames. "
+            if row["near_floor_samples"] else "")
+    if log_axes:
+        flag += f"Symmetric-log panels {log_axes}; thresholds: flux 1, residual 5%. No finite samples clipped."
+    fig.text(.5, .035,
+             "Blue points: original score subset; gray-only points also included. Yellow: strong modeled telluric absorption, included.\n"
+             "Current continuum and degree-five residual projection use all pixels. No injection or enuma input.\n"
+             + flag, ha="center", fontsize=8)
     return fig
 
 
@@ -282,6 +282,7 @@ def main(args):
                   report_script_sha256=digest(__file__), shape=[44, 79, 1848],
                   figure_frame=args.frame, evaluation_frames=EVALUATION,
                   normalized_figures=args.normalized,
+                  normalized_figure_format="Current fit only: spectrum, frame residual, evaluation residuals",
                   right_edge_pixels=args.edge_pixels,
                   right_edge_definition="Last stored pixels: increasing wavenumber, decreasing wavelength",
                   units=dict(fixed_scale_q5="Percent of each frame's unchanged all-pixel p95 observed flux",
@@ -318,7 +319,7 @@ def main(args):
     if args.normalized:
         with PdfPages(prefix.with_name(prefix.name + "_normalized_spectral_fits.pdf")) as pdf:
             for row in rows:
-                figure = make_normalized_figure(before, after, row, args.frame, args.edge_pixels)
+                figure = make_normalized_figure(after, row, args.frame)
                 pdf.savefig(figure)
                 if not args.no_png:
                     figure.savefig(prefix.with_name(f"{prefix.name}_normalized_o{row['cube_index']:02d}_spectral_fit.png"), dpi=140)
@@ -336,5 +337,5 @@ if __name__ == "__main__":
     parser.add_argument("--edge-pixels", type=int, default=128)
     parser.add_argument("--no-png", action="store_true")
     parser.add_argument("--normalized", action="store_true",
-                        help="Also retain the original continuum-normalized view, with separate denominators and no clipping")
+                        help="Also show the current normalized fit in the original three-panel format")
     main(parser.parse_args())
